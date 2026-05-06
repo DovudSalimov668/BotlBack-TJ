@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/rewards/', include('apps.rewards.urls')),
     path('api/users/', include('apps.users.user_urls')),
     path('api/analytics/', include('apps.analytics.urls')),
+    path('api/achievements/', include('apps.achievements.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

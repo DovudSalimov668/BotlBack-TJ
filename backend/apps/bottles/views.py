@@ -5,6 +5,8 @@ from django.utils import timezone
 from .models import Bottle, SKU
 from apps.scans.models import Scan
 from apps.recycling.models import RecyclingPoint
+from apps.achievements.services import check_and_unlock
+from apps.achievements.serializers import AchievementSerializer
 
 
 class VerifyBottleView(APIView):
@@ -45,11 +47,15 @@ class ScanBottleView(APIView):
         )
         bottle.is_scanned = True
         bottle.save(update_fields=['is_scanned'])
+        request.user.bump_streak()
+        unlocked = check_and_unlock(request.user)
         return Response({
             'scan_id': scan.id,
             'points_awarded': scan.points_awarded,
             'total_points': request.user.total_points,
             'sku': bottle.sku.name,
+            'streak_days': request.user.streak_days,
+            'unlocked_achievements': [AchievementSerializer(a).data for a in unlocked],
             'message': 'Бутылка отсканирована!',
         }, status=201)
 
@@ -81,10 +87,14 @@ class RecycleBottleView(APIView):
         )
         bottle.is_recycled = True
         bottle.save(update_fields=['is_recycled'])
+        request.user.bump_streak()
+        unlocked = check_and_unlock(request.user)
         return Response({
             'scan_id': scan.id,
             'points_awarded': scan.points_awarded,
             'total_points': request.user.total_points,
             'co2_saved_kg': request.user.co2_saved_kg,
             'recycling_point': rp.name,
+            'streak_days': request.user.streak_days,
+            'unlocked_achievements': [AchievementSerializer(a).data for a in unlocked],
         }, status=201)

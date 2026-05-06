@@ -34,6 +34,8 @@ class User(AbstractUser):
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='ru')
     region = models.CharField(max_length=20, choices=REGION_CHOICES, default='dushanbe')
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='consumer')
+    streak_days = models.PositiveIntegerField(default=0)
+    last_scan_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'phone'
@@ -61,3 +63,15 @@ class User(AbstractUser):
     @property
     def co2_saved_kg(self):
         return round(self.bottles_recycled * 0.082, 3)
+
+    def bump_streak(self):
+        from datetime import date, timedelta
+        today = date.today()
+        if self.last_scan_date == today:
+            return  # already scanned today
+        if self.last_scan_date == today - timedelta(days=1):
+            self.streak_days = (self.streak_days or 0) + 1
+        else:
+            self.streak_days = 1
+        self.last_scan_date = today
+        self.save(update_fields=['streak_days', 'last_scan_date'])

@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'apps.recycling',
     'apps.rewards',
     'apps.analytics',
+    'apps.achievements',
 ]
 
 MIDDLEWARE = [

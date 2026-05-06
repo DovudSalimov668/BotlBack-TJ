@@ -1,16 +1,22 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, AlertCircle, QrCode, Wallet, Leaf, Sparkles } from 'lucide-react'
+import { CheckCircle2, AlertCircle, QrCode, Wallet, Leaf, Sparkles, Flame } from 'lucide-react'
 import { NumberRoll } from '@/components/NumberRoll'
+import { AchievementUnlockModal, UnlockedAchievement } from '@/components/AchievementUnlockModal'
 
 export default function ScanResultPage() {
   const { t } = useTranslation()
   const { state } = useLocation()
-  const result = state as { points?: number; total?: number; sku?: string; type?: string; error?: string } | null
+  const result = state as {
+    points?: number; total?: number; sku?: string; type?: string; error?: string
+    streak_days?: number; unlocked_achievements?: UnlockedAchievement[]
+  } | null
+
+  const [unlockQueue, setUnlockQueue] = useState<UnlockedAchievement[]>(result?.unlocked_achievements ?? [])
 
   useEffect(() => {
     if (!result?.error) {
@@ -173,11 +179,29 @@ export default function ScanResultPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.9, type: 'spring', damping: 14 }}
-            className="flex items-center justify-center gap-2 rounded-2xl py-3 px-5 mb-6 text-white text-sm font-semibold"
+            className="flex items-center justify-center gap-2 rounded-2xl py-3 px-5 mb-3 text-white text-sm font-semibold"
             style={{ background: 'linear-gradient(135deg, rgba(0,166,81,0.4), rgba(0,122,60,0.5))', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,166,81,0.4)' }}
           >
             <Leaf size={16} className="text-brand-eco" />
             <span>{t('scan.co2_saved')} — <strong>0.082 кг CO₂</strong></span>
+          </motion.div>
+        )}
+
+        {result?.streak_days && result.streak_days > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.0, type: 'spring', damping: 14 }}
+            className="flex items-center justify-center gap-2 rounded-2xl py-3 px-5 mb-6 text-white text-sm font-bold"
+            style={{ background: 'linear-gradient(135deg, rgba(255,107,53,0.5), rgba(244,0,9,0.5))', backdropFilter: 'blur(20px)', border: '1px solid rgba(244,0,9,0.4)' }}
+          >
+            <motion.span
+              animate={{ y: [0, -2, 0], rotate: [-5, 5, -5] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <Flame size={16} fill="#FFB800" strokeWidth={1} />
+            </motion.span>
+            <span>Серия: <strong className="text-brand-gold">{result.streak_days} {result.streak_days === 1 ? 'день' : result.streak_days < 5 ? 'дня' : 'дней'}</strong> подряд!</span>
           </motion.div>
         )}
 
@@ -205,6 +229,12 @@ export default function ScanResultPage() {
           </Link>
         </motion.div>
       </motion.div>
+
+      {/* Achievement queue — show one at a time, dismiss to advance */}
+      <AchievementUnlockModal
+        achievement={unlockQueue[0] ?? null}
+        onClose={() => setUnlockQueue((q) => q.slice(1))}
+      />
     </div>
   )
 }

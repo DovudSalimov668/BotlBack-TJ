@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'phone', 'name', 'language', 'region', 'is_staff',
-            'total_points', 'bottles_recycled', 'co2_saved_kg', 'created_at',
+            'total_points', 'bottles_recycled', 'co2_saved_kg',
+            'streak_days', 'last_scan_date', 'created_at',
         ]
-        read_only_fields = ['id', 'phone', 'is_staff', 'created_at']
+        read_only_fields = ['id', 'phone', 'is_staff', 'streak_days', 'last_scan_date', 'created_at']

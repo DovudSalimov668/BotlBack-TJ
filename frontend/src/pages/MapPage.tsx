@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
-import { MapPin, Navigation, X, Recycle, ChevronUp } from 'lucide-react'
+import { MapPin, Navigation, X, Recycle, ChevronUp, Search } from 'lucide-react'
 import { useRecyclingPoints } from '@/api/recycling'
 import 'leaflet/dist/leaflet.css'
 
@@ -37,6 +37,22 @@ export default function MapPage() {
   const [selected, setSelected] = useState<RecyclingPoint | null>(null)
   const [flyTarget, setFlyTarget] = useState<{ lat: number; lng: number } | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const [regionFilter, setRegionFilter] = useState<string | null>(null)
+
+  const filteredPoints = useMemo(() => {
+    let arr = (points as RecyclingPoint[] | undefined) ?? []
+    if (search.trim()) {
+      const q = search.trim().toLowerCase()
+      arr = arr.filter((p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.address.toLowerCase().includes(q) ||
+        p.region.toLowerCase().includes(q),
+      )
+    }
+    if (regionFilter) arr = arr.filter((p) => p.region === regionFilter)
+    return arr
+  }, [points, search, regionFilter])
 
   const handleSelectPoint = (rp: RecyclingPoint) => {
     setSelected(rp)
@@ -50,7 +66,7 @@ export default function MapPage() {
     })
   }
 
-  const byRegion = (points as RecyclingPoint[] | undefined)?.reduce<Record<string, RecyclingPoint[]>>((acc, p) => {
+  const byRegion = filteredPoints.reduce<Record<string, RecyclingPoint[]>>((acc, p) => {
     acc[p.region] = acc[p.region] ? [...acc[p.region], p] : [p]
     return acc
   }, {})
@@ -209,16 +225,64 @@ export default function MapPage() {
               className="fixed bottom-0 left-0 right-0 z-[1200] max-h-[75dvh] flex flex-col rounded-t-3xl overflow-hidden"
               style={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)' }}
             >
-              <div className="flex items-center justify-between px-6 py-4 flex-shrink-0 border-b border-white/8">
+              <div className="flex items-center justify-between px-6 pt-4 pb-3 flex-shrink-0">
                 <div>
                   <h3 className="text-white font-black text-base">Пункты приёма</h3>
-                  <p className="text-white/40 text-xs mt-0.5">{points?.length ?? 0} точек по всему Таджикистану</p>
+                  <p className="text-white/40 text-xs mt-0.5">
+                    {filteredPoints.length} {filteredPoints.length === (points?.length ?? 0) ? 'точек' : `из ${points?.length ?? 0}`}
+                  </p>
                 </div>
                 <button onClick={() => setPanelOpen(false)} className="text-white/30 hover:text-white">
                   <X size={20} />
                 </button>
               </div>
-              <div className="overflow-y-auto flex-1 pb-8">
+
+              {/* Search input */}
+              <div className="px-6 pb-3 flex-shrink-0">
+                <div className="relative">
+                  <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Поиск по названию, адресу..."
+                    className="w-full bg-white/8 border border-white/10 rounded-2xl pl-10 pr-10 py-2.5 text-white placeholder-white/30 text-sm focus:outline-none focus:bg-white/12 focus:border-brand-red transition-all"
+                  />
+                  {search && (
+                    <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Region filter pills */}
+              <div className="px-6 pb-3 flex gap-1.5 overflow-x-auto flex-shrink-0 hide-scroll">
+                <button
+                  onClick={() => setRegionFilter(null)}
+                  className={`whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold transition-all ${regionFilter === null ? 'bg-white text-black' : 'bg-white/10 text-white/55'}`}
+                >
+                  Все
+                </button>
+                {Object.keys(regionColors).map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setRegionFilter(regionFilter === r ? null : r)}
+                    className={`whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold transition-all flex items-center gap-1.5 ${regionFilter === r ? 'text-white' : 'bg-white/10 text-white/55'}`}
+                    style={regionFilter === r ? { background: regionColors[r] } : {}}
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: regionFilter === r ? '#fff' : regionColors[r] }} />
+                    {t(`regions.${r}`)}
+                  </button>
+                ))}
+              </div>
+
+              <div className="overflow-y-auto flex-1 pb-8 border-t border-white/8">
+                {filteredPoints.length === 0 && (
+                  <div className="py-12 text-center">
+                    <Search size={28} className="text-white/20 mx-auto mb-2" />
+                    <p className="text-white/40 text-sm">Ничего не найдено</p>
+                  </div>
+                )}
                 {Object.entries(byRegion ?? {}).map(([region, rps]) => (
                   <div key={region}>
                     <div className="flex items-center gap-2 px-6 py-3 sticky top-0 bg-[#111]">

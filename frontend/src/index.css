@@ -200,6 +200,10 @@
   /* Tabular numbers for counters */
   .tabular { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
 
+  /* Hide scrollbar (used in horizontal pill rows) */
+  .hide-scroll::-webkit-scrollbar { display: none; }
+  .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
   /* Hide on mobile (cursor effects only on >= md) */
   @media (max-width: 768px) {
     .desktop-only { display: none !important; }

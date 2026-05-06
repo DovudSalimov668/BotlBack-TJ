@@ -26,7 +26,14 @@ export default function ScanPage() {
           try {
             const data = await mutation.mutateAsync({ qr_code: decodedText.trim() })
             navigate(`/scan/result/${data.scan_id}`, {
-              state: { points: data.points_awarded, total: data.total_points, sku: data.sku, type: 'purchase' },
+              state: {
+                points: data.points_awarded,
+                total: data.total_points,
+                sku: data.sku,
+                type: 'purchase',
+                streak_days: data.streak_days,
+                unlocked_achievements: data.unlocked_achievements ?? [],
+              },
             })
           } catch (err: unknown) {
             const error = err as { response?: { data?: { code?: string } } }

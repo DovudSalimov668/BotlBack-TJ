@@ -9,6 +9,14 @@ export function useScanHistory() {
   })
 }
 
+export function useAchievements() {
+  return useQuery({
+    queryKey: ['achievements'],
+    queryFn: () => api.get('/achievements/me/').then((r) => r.data),
+    staleTime: 30_000,
+  })
+}
+
 export function useUpdateProfile() {
   const qc = useQueryClient()
   return useMutation({
