@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.utils import timezone
 from .models import Bottle, SKU
 from apps.scans.models import Scan
 from apps.recycling.models import RecyclingPoint
@@ -40,6 +41,7 @@ class ScanBottleView(APIView):
             longitude=lon,
             region=region,
             points_awarded=10,
+            created_at=timezone.now(),
         )
         bottle.is_scanned = True
         bottle.save(update_fields=['is_scanned'])
@@ -75,6 +77,7 @@ class RecycleBottleView(APIView):
             longitude=float(rp.longitude),
             region=rp.region,
             points_awarded=20,
+            created_at=timezone.now(),
         )
         bottle.is_recycled = True
         bottle.save(update_fields=['is_recycled'])

@@ -184,56 +184,54 @@ class Command(BaseCommand):
             )
             bottles.append(b)
 
-        self.stdout.write('📱 Creating 3500 scans over 30 days...')
+        self.stdout.write('📱 Creating ~3500 scans over 30 days...')
         end_date = date.today()
         start_date = end_date - timedelta(days=30)
         scan_objs = []
-        bottle_pool = list(Bottle.objects.exclude(qr_code__in=magic_qrs).order_by('?')[:3000])
+        # Reserve 33 bottles for demo user; use at most 1965 for main pool
+        all_regular = list(Bottle.objects.exclude(qr_code__in=magic_qrs).order_by('?'))
+        random.shuffle(all_regular)
+        demo_reserve = all_regular[:33]
+        demo_reserve_pks = {b.pk for b in demo_reserve}
+        bottle_pool = [b for b in all_regular[33:] if b.pk not in demo_reserve_pks][:1965]
         random.shuffle(bottle_pool)
-        used_bottles = set()
 
-        for i in range(3500):
+        # Generate purchase-first: for each bottle, optionally follow with recycle.
+        # This guarantees recycle_count <= purchase_count per region (no >100% rates).
+        for bottle in bottle_pool:
             user = random.choice(users)
             region = user.region
-            rps_for_region = rp_by_region.get(region, rp_by_region['dushanbe'])
-            is_recycle = random.random() < RECYCLING_RATES.get(region, 0.3)
-            if is_recycle:
-                candidates = [b for b in bottle_pool if b.qr_code in used_bottles]
-                if not candidates:
-                    is_recycle = False
-            if is_recycle and candidates:
-                bottle = random.choice(candidates)
-                rp = random.choice(rps_for_region) if rps_for_region else None
-                lat = float(rp.latitude) if rp else None
-                lon = float(rp.longitude) if rp else None
-                dt = random_dt_in_range(start_date, end_date)
+            rps = rp_by_region.get(region, rp_by_region['dushanbe'])
+            dt_purchase = random_dt_in_range(start_date, end_date)
+            scan_objs.append(Scan(
+                bottle=bottle,
+                user=user,
+                scan_type='purchase',
+                region=region,
+                points_awarded=10,
+                created_at=dt_purchase,
+            ))
+            bottle.is_scanned = True
+
+            if random.random() < RECYCLING_RATES.get(region, 0.3):
+                rp = random.choice(rps) if rps else None
+                # Recycle happens 1-14 days after purchase
+                offset_days = random.randint(1, 14)
+                dt_recycle = dt_purchase + timedelta(days=offset_days)
+                end_dt = datetime(end_date.year, end_date.month, end_date.day, 23, 59, tzinfo=TJ)
+                if dt_recycle > end_dt:
+                    dt_recycle = random_dt_in_range(start_date, end_date)
                 scan_objs.append(Scan(
                     bottle=bottle,
-                    user=user,
+                    user=random.choice(users),
                     scan_type='recycle',
-                    latitude=lat,
-                    longitude=lon,
+                    latitude=float(rp.latitude) if rp else None,
+                    longitude=float(rp.longitude) if rp else None,
                     region=region,
                     points_awarded=20,
-                    created_at=dt,
+                    created_at=dt_recycle,
                 ))
                 bottle.is_recycled = True
-            else:
-                available = [b for b in bottle_pool if b.qr_code not in used_bottles]
-                if not available:
-                    available = bottle_pool
-                bottle = random.choice(available)
-                used_bottles.add(bottle.qr_code)
-                dt = random_dt_in_range(start_date, end_date)
-                scan_objs.append(Scan(
-                    bottle=bottle,
-                    user=user,
-                    scan_type='purchase',
-                    region=region,
-                    points_awarded=10,
-                    created_at=dt,
-                ))
-                bottle.is_scanned = True
 
         Scan.objects.bulk_create(scan_objs, ignore_conflicts=True)
         Bottle.objects.bulk_update(
@@ -248,9 +246,7 @@ class Command(BaseCommand):
             defaults={'name': 'Комрон Рустамов', 'region': 'dushanbe'}
         )
         prize = Prize.objects.first()
-        demo_bottles = list(Bottle.objects.exclude(qr_code__in=magic_qrs).filter(
-            is_scanned=False, is_recycled=False
-        )[:30])
+        demo_bottles = demo_reserve[:30]
         for i, b in enumerate(demo_bottles[:30]):
             b.is_scanned = True
             Scan.objects.create(

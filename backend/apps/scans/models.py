@@ -25,7 +25,7 @@ class Scan(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     region = models.CharField(max_length=20, choices=REGION_CHOICES, default='dushanbe')
     points_awarded = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(db_index=True)
 
     class Meta:
         verbose_name = 'Скан'
