@@ -1,0 +1,60 @@
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers
+from rest_framework.response import Response
+from .models import Prize, Redemption
+
+
+class PrizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prize
+        fields = '__all__'
+
+
+class RedemptionSerializer(serializers.ModelSerializer):
+    prize_name = serializers.CharField(source='prize.name', read_only=True)
+    class Meta:
+        model = Redemption
+        fields = ['id', 'prize', 'prize_name', 'points_spent', 'status', 'redeemed_at']
+
+
+class PrizeListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PrizeSerializer
+    queryset = Prize.objects.filter(is_active=True)
+
+
+class RedeemView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        prize_id = request.data.get('prize_id')
+        prize = Prize.objects.filter(id=prize_id, is_active=True).first()
+        if not prize:
+            return Response({'error': 'Prize not found'}, status=404)
+        if request.user.total_points < prize.points_cost:
+            return Response({'error': 'Insufficient points'}, status=400)
+        if prize.stock_quantity == 0:
+            return Response({'error': 'Out of stock'}, status=400)
+        redemption = Redemption.objects.create(
+            user=request.user,
+            prize=prize,
+            points_spent=prize.points_cost,
+            status='pending',
+        )
+        if prize.stock_quantity > 0:
+            prize.stock_quantity -= 1
+            prize.save(update_fields=['stock_quantity'])
+        return Response({
+            'redemption_id': redemption.id,
+            'prize': prize.name,
+            'points_spent': redemption.points_spent,
+            'remaining_points': request.user.total_points,
+        }, status=201)
+
+
+class RedemptionHistoryView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RedemptionSerializer
+    def get_queryset(self):
+        return Redemption.objects.filter(user=self.request.user)

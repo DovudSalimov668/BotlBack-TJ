@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "scan": "Скан кунед",
+    "wallet": "Ҳамён",
+    "rewards": "Ҷоизаҳо",
+    "leaderboard": "Рейтинг",
+    "map": "Харита",
+    "profile": "Профил",
+    "dashboard": "Дашборд"
+  },
+  "landing": {
+    "hero": "Скан → Хол → Ҷоиза → Тоҷикистони Тоза",
+    "subtitle": "Бутилкаи Coca-Colaро скан кунед, хол гиред ва онҳоро ба ҷоизаҳо иваз кунед",
+    "scan_btn": "Бутилкаро скан кунед",
+    "login_link": "Даромадан",
+    "register_link": "Сабти ном",
+    "how_it_works": "Чӣ тавр кор мекунад",
+    "step1": "Бутилкаи Coca-Cola харед",
+    "step2": "QR-кодро скан кунед — +10 хол",
+    "step3": "Ба нуқтаи қабул супоред — +20 хол",
+    "step4": "Холҳоро ба ҷоизаҳо иваз кунед!"
+  },
+  "auth": {
+    "phone": "Рақами телефон",
+    "name": "Номи шумо",
+    "otp": "Рамзи тасдиқ",
+    "register": "Сабти ном",
+    "login": "Даромадан",
+    "logout": "Баромадан",
+    "otp_hint": "Демо: 1234 ворид кунед",
+    "have_account": "Аккаунт доред?",
+    "no_account": "Аккаунт надоред?",
+    "phone_placeholder": "+992 9XX XXX XXXX"
+  },
+  "scan": {
+    "title": "Бутилкаро скан кунед",
+    "subtitle": "Камераро ба QR-код равона кунед",
+    "points_earned": "Холҳо гирифта шуд",
+    "already_scanned": "Бутилка аллакай скан шудааст",
+    "success": "Муваффақ!",
+    "scan_another": "Боз скан кунед",
+    "total": "Ҳамаи холҳо",
+    "recycle_bonus": "+20 хол барои коркард!",
+    "purchase_bonus": "+10 хол барои харид!",
+    "co2_saved": "кг CO₂ сарфа шуд",
+    "tip": "Бутилкаро ба нуқтаи қабул супоред ва +20 хол гиред!"
+  },
+  "wallet": {
+    "balance": "Баланс",
+    "points": "хол",
+    "bottles_recycled": "Бутилкаҳои коркардшуда",
+    "co2_saved": "кг CO₂ сарфа шуд",
+    "recent_activity": "Фаъолияти охирин",
+    "purchase": "Харид",
+    "recycle": "Коркард",
+    "get_prize": "Ҷоиза гиред",
+    "rank": "Рейтинги ман",
+    "empty": "Ҳоло фаъолияте нест. Скан кардан оғоз кунед!",
+    "trees_equivalent": "эквиваленти дарахтон"
+  },
+  "rewards": {
+    "title": "Ҷоизаҳо",
+    "redeem": "Гирифтан",
+    "points_required": "хол",
+    "out_of_stock": "Дар захира нест",
+    "confirm_redeem": "Гирифтанро тасдиқ мекунед?",
+    "redeem_success": "Ҷоиза гирифта шуд!",
+    "insufficient_points": "Холҳо кам аст",
+    "history": "Таърихи мубодила",
+    "your_points": "Холҳои шумо",
+    "confirm_btn": "Тасдиқ",
+    "cancel_btn": "Бекор кардан"
+  },
+  "leaderboard": {
+    "title": "Рейтинг",
+    "today": "Имрӯз",
+    "week": "Ҳафта",
+    "month": "Моҳ",
+    "all_time": "Ҳамеша",
+    "region": "Минтақа",
+    "all_regions": "Ҳама минтақаҳо",
+    "bottles": "бутилка",
+    "rank": "Ҷой",
+    "points": "Хол"
+  },
+  "map": {
+    "title": "Нуқтаҳои қабул",
+    "active": "Фаъол",
+    "address": "Суроға",
+    "scan_here": "Инҷо скан кунед",
+    "find_nearest": "Наздиктаринро ёбед",
+    "loading": "Хариталоди..."
+  },
+  "profile": {
+    "language": "Забон",
+    "russian": "Русӣ",
+    "tajik": "Тоҷикӣ",
+    "region": "Минтақа",
+    "member_since": "Узв аз",
+    "settings": "Танзимот"
+  },
+  "regions": {
+    "dushanbe": "Душанбе",
+    "sughd": "Суғд",
+    "khatlon": "Хатлон",
+    "gbao": "ВМКБ",
+    "rrs": "НТҶ"
+  },
+  "admin": {
+    "overview": "Маълумот",
+    "total_bottles": "Ҳамаи бутилкаҳо",
+    "recycled": "Коркард шуд",
+    "users": "Корбарон",
+    "recycling_rate": "Рейтинги коркард",
+    "co2_saved": "CO₂ сарфа шуд",
+    "geographic": "Ҷуғрофия",
+    "timeseries": "Силсилаи вақт",
+    "campaigns": "Кампанияҳо",
+    "outlets": "Нуқтаҳои қабул",
+    "nowruz": "Наврӯз 2026",
+    "ramadan": "Рамазон 2026",
+    "period": "Давра",
+    "days7": "7 рӯз",
+    "days30": "30 рӯз",
+    "days90": "90 рӯз",
+    "live_feed": "Фаъолият дар вақти воқеӣ",
+    "bottles_today": "Бутилкаҳо имрӯз",
+    "active_users": "Корбарони фаъол"
+  },
+  "common": {
+    "loading": "Боргузорӣ...",
+    "error": "Хато",
+    "retry": "Такроран",
+    "close": "Пӯшидан",
+    "confirm": "Тасдиқ",
+    "cancel": "Бекор кардан",
+    "back": "Бозгашт",
+    "save": "Сохтан",
+    "no_data": "Маълумот нест",
+    "kg": "кг",
+    "bottles": "бутилка"
+  }
+}
