@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -21,14 +23,42 @@
     --ring: 358 100% 48%;
     --radius: 1rem;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Branded text selection */
+  ::selection {
+    background: #F40009;
+    color: #fff;
+  }
+  ::-moz-selection {
+    background: #F40009;
+    color: #fff;
+  }
+
+  /* Sleeker scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.15);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(244,0,9,0.5); background-clip: padding-box; border: 2px solid transparent; }
 }
 
 @layer base {
   * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -85,6 +115,94 @@
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 0.95;
+  }
+
+  /* Aurora flowing background — used on hero panels */
+  .aurora {
+    position: relative;
+    background: #0A0A0A;
+    overflow: hidden;
+  }
+  .aurora::before {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background:
+      radial-gradient(closest-side, rgba(244,0,9,0.85), transparent 70%) 10% 20% / 60% 60% no-repeat,
+      radial-gradient(closest-side, rgba(255,184,0,0.55), transparent 70%) 80% 10% / 55% 55% no-repeat,
+      radial-gradient(closest-side, rgba(0,166,81,0.45), transparent 70%) 70% 80% / 60% 60% no-repeat,
+      radial-gradient(closest-side, rgba(108,99,255,0.45), transparent 70%) 20% 90% / 55% 55% no-repeat;
+    filter: blur(50px);
+    animation: aurora-drift 24s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .aurora > * { position: relative; z-index: 1; }
+
+  @keyframes aurora-drift {
+    0%   { transform: translate3d(-3%, -2%, 0) rotate(0deg)   scale(1.05); }
+    50%  { transform: translate3d( 3%,  2%, 0) rotate(20deg)  scale(1.15); }
+    100% { transform: translate3d(-2%,  3%, 0) rotate(-12deg) scale(1.08); }
+  }
+
+  /* Animated gradient text */
+  .gradient-text {
+    background: linear-gradient(120deg, #F40009 0%, #FF6B35 35%, #FFB800 70%, #F40009 100%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 6s ease-in-out infinite;
+  }
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  /* Subtle text shimmer — for white text on dark */
+  .text-shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, #fff 50%, rgba(255,255,255,0.5) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-shimmer 4s linear infinite;
+  }
+  @keyframes text-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Marquee track */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 28s linear infinite;
+  }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Glow ring (used on focus / accents) */
+  .glow-red    { box-shadow: 0 0 0 1px rgba(244,0,9,0.3), 0 12px 40px rgba(244,0,9,0.35); }
+  .glow-gold   { box-shadow: 0 0 0 1px rgba(255,184,0,0.3), 0 12px 40px rgba(255,184,0,0.35); }
+  .glow-eco    { box-shadow: 0 0 0 1px rgba(0,166,81,0.3), 0 12px 40px rgba(0,166,81,0.3); }
+
+  /* Conic gradient ring — used on tier badge */
+  .conic-gold {
+    background:
+      conic-gradient(from 180deg at 50% 50%,
+        #FFB800 0deg, #FFD75A 90deg, #FFB800 180deg, #C28800 270deg, #FFB800 360deg);
+  }
+
+  /* Tabular numbers for counters */
+  .tabular { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+
+  /* Hide on mobile (cursor effects only on >= md) */
+  @media (max-width: 768px) {
+    .desktop-only { display: none !important; }
   }
 }
 

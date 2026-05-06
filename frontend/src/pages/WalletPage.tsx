@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Recycle, Leaf, Trophy, ArrowRight, QrCode, Zap } from 'lucide-react'
+import { Recycle, Leaf, Trophy, ArrowRight, QrCode, Zap, Sparkles, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { AnimatedCounter } from '@/components/AnimatedCounter'
+import { NumberRoll } from '@/components/NumberRoll'
 import { useAuthStore } from '@/store/authStore'
 import { useUserStats } from '@/api/users'
 import { useMe } from '@/api/auth'
@@ -17,64 +17,121 @@ export default function WalletPage() {
 
   const points = meData?.total_points ?? user?.total_points ?? 0
   const recycled = meData?.bottles_recycled ?? user?.bottles_recycled ?? 0
-  const co2 = meData?.co2_saved_kg ?? user?.co2_saved_kg ?? 0
+  const co2 = Math.round((meData?.co2_saved_kg ?? user?.co2_saved_kg ?? 0) * 10) / 10
 
-  const tier = points >= 500 ? { label: 'Золото', color: 'text-brand-gold' }
-    : points >= 200 ? { label: 'Серебро', color: 'text-gray-400' }
-    : { label: 'Бронза', color: 'text-amber-600' }
+  const tier = points >= 500
+    ? { label: 'Gold', color: '#FFB800', bg: 'conic-gold', next: 1000, prev: 500 }
+    : points >= 200
+    ? { label: 'Silver', color: '#9CA3AF', bg: 'bg-gradient-to-br from-gray-300 to-gray-500', next: 500, prev: 200 }
+    : { label: 'Bronze', color: '#CD7F32', bg: 'bg-gradient-to-br from-amber-500 to-amber-700', next: 200, prev: 0 }
+
+  const tierProgress = Math.min(100, ((points - tier.prev) / (tier.next - tier.prev)) * 100)
 
   return (
     <div className="min-h-screen bg-[#F8F8F8] pb-28">
-      {/* ── Hero card ── */}
-      <div className="relative mesh-red noise overflow-hidden px-6 pt-12 pb-24">
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex items-center justify-between mb-8">
+      {/* ── Hero card ── aurora red */}
+      <div className="relative aurora overflow-hidden px-6 pt-12 pb-28">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative z-10"
+        >
+          <div className="flex items-center justify-between mb-7">
             <div>
-              <p className="text-white/60 text-xs font-semibold tracking-widest uppercase">Баланс</p>
-              <p className="text-white/80 text-sm font-medium mt-0.5">
+              <p className="text-white/55 text-[10px] font-bold tracking-[0.25em] uppercase">Баланс</p>
+              <p className="text-white text-base font-bold mt-1">
                 {user?.name?.split(' ')[0] ?? 'Пользователь'}
               </p>
             </div>
-            <div className={`glass text-xs font-black px-3 py-1.5 rounded-full ${tier.color}`}>
-              {tier.label}
+
+            {/* Tier badge — conic gold ring */}
+            <motion.div
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', damping: 14, delay: 0.2 }}
+              className="relative"
+            >
+              <div className={`w-14 h-14 rounded-full ${tier.bg} p-[2px]`}>
+                <div className="w-full h-full rounded-full bg-black/80 flex items-center justify-center backdrop-blur">
+                  <Trophy size={20} style={{ color: tier.color }} />
+                </div>
+              </div>
+              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 text-[9px] font-black text-white bg-black/80 px-2 py-0.5 rounded-full whitespace-nowrap" style={{ color: tier.color }}>
+                {tier.label}
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Massive rolling counter */}
+          <div className="flex items-end gap-3 mb-1">
+            <NumberRoll
+              value={points}
+              duration={1.6}
+              className="text-[88px] font-black text-white tracking-tighter leading-[0.85]"
+            />
+            <span className="text-white/45 text-xl font-medium mb-3">pts</span>
+          </div>
+
+          {/* Tier progress bar */}
+          <div className="mt-6 mb-2">
+            <div className="flex items-center justify-between text-[11px] mb-2">
+              <span className="text-white/55 font-semibold">До {tier.next === 1000 ? 'Платины' : tier.next === 500 ? 'Gold' : 'Silver'}</span>
+              <span className="text-white font-bold">{Math.max(0, tier.next - points)} pts</span>
+            </div>
+            <div className="h-1.5 bg-white/15 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${tierProgress}%` }}
+                transition={{ duration: 1.4, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="h-full rounded-full"
+                style={{ background: `linear-gradient(90deg, #FFB800, ${tier.color})` }}
+              />
             </div>
           </div>
 
-          <div className="flex items-end gap-3">
-            <AnimatedCounter value={points} className="text-7xl font-black text-white tracking-tight leading-none" />
-            <span className="text-white/50 text-2xl font-medium mb-2">pts</span>
-          </div>
-
           {stats?.rank && (
-            <p className="text-white/40 text-xs mt-3 font-medium">
-              #{stats.rank} в рейтинге • {user?.region ? t(`regions.${user.region}`) : 'Душанбе'}
-            </p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center gap-2 mt-4"
+            >
+              <Sparkles size={11} className="text-brand-gold" />
+              <p className="text-white/50 text-[11px] font-medium">
+                #{stats.rank} в рейтинге • {user?.region ? t(`regions.${user.region}`) : 'Душанбе'}
+              </p>
+            </motion.div>
           )}
         </motion.div>
       </div>
 
       {/* ── Bento stats ── */}
-      <div className="px-6 -mt-14 relative z-10 space-y-4">
+      <div className="px-5 -mt-16 relative z-10 space-y-3">
         {/* 3-col stats row */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: Recycle, value: recycled, label: 'Сдано', unit: 'бут.', color: 'text-brand-eco', bg: 'bg-green-50' },
-            { icon: Leaf, value: co2, label: 'CO₂', unit: 'кг', color: 'text-emerald-500', bg: 'bg-emerald-50' },
-            { icon: Trophy, value: stats?.rank ?? 0, label: 'Ранг', unit: '', color: 'text-brand-gold', bg: 'bg-yellow-50', prefix: '#' },
-          ].map(({ icon: Icon, value, label, unit, color, bg, prefix = '' }, i) => (
+            { icon: Recycle, value: recycled, label: 'Сдано', unit: 'бут.', accent: '#00A651', tint: 'rgba(0,166,81,0.08)' },
+            { icon: Leaf, value: co2, label: 'CO₂', unit: 'кг', accent: '#10B981', tint: 'rgba(16,185,129,0.08)' },
+            { icon: Trophy, value: stats?.rank ?? 0, label: 'Ранг', unit: '', accent: '#FFB800', tint: 'rgba(255,184,0,0.10)', prefix: '#' },
+          ].map(({ icon: Icon, value, label, unit, accent, tint, prefix = '' }, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className={`${bg} rounded-3xl p-4 text-center shadow-sm`}
+              transition={{ delay: 0.1 + i * 0.08, type: 'spring', damping: 18 }}
+              whileHover={{ y: -3 }}
+              className="bg-white rounded-3xl p-4 text-center shadow-[0_4px_20px_rgba(0,0,0,0.04)] relative overflow-hidden"
             >
-              <Icon size={20} className={`${color} mx-auto mb-2`} />
-              <p className="text-brand-charcoal font-black text-lg leading-none">
-                {prefix}{typeof value === 'number' ? value.toLocaleString('ru') : value}
-                {unit && <span className="text-xs font-semibold text-gray-400 ml-0.5">{unit}</span>}
-              </p>
-              <p className="text-gray-500 text-xs mt-1">{label}</p>
+              <div className="absolute inset-0" style={{ background: tint }} />
+              <div className="relative">
+                <Icon size={20} className="mx-auto mb-2" style={{ color: accent }} />
+                <p className="text-brand-charcoal font-black text-lg leading-none flex items-baseline justify-center">
+                  {prefix && <span>{prefix}</span>}
+                  <NumberRoll value={typeof value === 'number' ? Math.round(value) : 0} duration={1.2} />
+                  {unit && <span className="text-xs font-semibold text-gray-400 ml-0.5">{unit}</span>}
+                </p>
+                <p className="text-gray-500 text-[11px] mt-1 font-semibold">{label}</p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -83,30 +140,43 @@ export default function WalletPage() {
         <div className="grid grid-cols-2 gap-3">
           <Link to="/rewards" className="col-span-1">
             <motion.div
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-brand-red rounded-3xl p-5 flex flex-col h-full min-h-[100px]"
+              className="bg-brand-red rounded-3xl p-5 flex flex-col h-full min-h-[110px] relative overflow-hidden"
             >
-              <Zap size={22} className="text-white mb-auto" />
-              <div className="mt-3">
+              {/* shimmer */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%)',
+                  backgroundSize: '200% 100%',
+                }}
+                animate={{ backgroundPosition: ['-100% 0', '200% 0'] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5 }}
+              />
+              <Zap size={22} className="text-white mb-auto relative z-10" />
+              <div className="mt-3 relative z-10">
                 <p className="text-white font-black text-base leading-tight">Обменять баллы</p>
-                <p className="text-white/60 text-xs mt-0.5">8 призов</p>
+                <p className="text-white/65 text-xs mt-0.5">8 призов</p>
               </div>
-              <ArrowRight size={16} className="text-white/60 mt-2 self-end" />
+              <ArrowRight size={16} className="text-white/60 mt-2 self-end relative z-10" />
             </motion.div>
           </Link>
           <Link to="/scan" className="col-span-1">
             <motion.div
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-brand-dark rounded-3xl p-5 flex flex-col h-full min-h-[100px]"
+              className="bg-brand-dark rounded-3xl p-5 flex flex-col h-full min-h-[110px] relative overflow-hidden"
             >
-              <QrCode size={22} className="text-white mb-auto" />
-              <div className="mt-3">
+              {/* gradient blob */}
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full opacity-20"
+                style={{ background: 'radial-gradient(circle, #F40009, transparent 70%)' }} />
+              <QrCode size={22} className="text-white mb-auto relative z-10" />
+              <div className="mt-3 relative z-10">
                 <p className="text-white font-black text-base leading-tight">Сканировать</p>
                 <p className="text-white/40 text-xs mt-0.5">+10 / +20 pts</p>
               </div>
-              <ArrowRight size={16} className="text-white/40 mt-2 self-end" />
+              <ArrowRight size={16} className="text-white/40 mt-2 self-end relative z-10" />
             </motion.div>
           </Link>
         </div>
@@ -116,10 +186,14 @@ export default function WalletPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-3xl overflow-hidden shadow-sm"
+          className="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
-            <h3 className="font-black text-brand-charcoal text-sm">{t('wallet.recent_activity')}</h3>
+            <div className="flex items-center gap-2">
+              <TrendingUp size={14} className="text-brand-red" />
+              <h3 className="font-black text-brand-charcoal text-sm">{t('wallet.recent_activity')}</h3>
+            </div>
+            <span className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">Live</span>
           </div>
           {points === 0 ? (
             <p className="text-gray-400 text-sm text-center py-10">{t('wallet.empty')}</p>
@@ -128,8 +202,14 @@ export default function WalletPage() {
               {[...Array(5)].map((_, i) => {
                 const isRecycle = i % 2 === 0
                 return (
-                  <div key={i} className="flex items-center gap-4 px-5 py-3.5">
-                    <div className={`w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0 ${isRecycle ? 'bg-green-100' : 'bg-red-50'}`}>
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + i * 0.06 }}
+                    className="flex items-center gap-4 px-5 py-3.5"
+                  >
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${isRecycle ? 'bg-green-100' : 'bg-red-50'}`}>
                       {isRecycle
                         ? <Recycle size={17} className="text-brand-eco" />
                         : <QrCode size={17} className="text-brand-red" />}
@@ -143,7 +223,7 @@ export default function WalletPage() {
                     <span className={`font-black text-sm flex-shrink-0 ${isRecycle ? 'text-brand-eco' : 'text-brand-red'}`}>
                       +{isRecycle ? 20 : 10}
                     </span>
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>

@@ -41,7 +41,7 @@ export default function LoginPage() {
     'w-full bg-white/8 border border-white/15 rounded-2xl px-4 py-3.5 text-white placeholder-white/30 text-sm focus:outline-none focus:border-brand-red focus:bg-white/12 transition-all'
 
   return (
-    <div className="min-h-screen mesh-hero noise relative flex flex-col">
+    <div className="min-h-screen aurora relative flex flex-col">
       {/* Back button */}
       <div className="p-6 relative z-10">
         <Link to="/">
