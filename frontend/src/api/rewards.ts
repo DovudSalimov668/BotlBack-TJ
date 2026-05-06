@@ -5,7 +5,7 @@ import { queryClient } from '@/lib/queryClient'
 export function usePrizes() {
   return useQuery({
     queryKey: ['prizes'],
-    queryFn: () => api.get('/rewards/prizes/').then((r) => r.data),
+    queryFn: () => api.get('/rewards/prizes/').then((r) => r.data.results ?? r.data),
   })
 }
 
