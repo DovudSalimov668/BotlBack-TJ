@@ -79,6 +79,24 @@ class UserStatsView(APIView):
             'rank': rank,
         })
 
+class MyScanHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        from apps.scans.models import Scan
+        scans = Scan.objects.filter(user=request.user).select_related('bottle__sku').order_by('-created_at')[:20]
+        data = []
+        for s in scans:
+            data.append({
+                'id': s.id,
+                'scan_type': s.scan_type,
+                'points_awarded': s.points_awarded,
+                'sku': s.bottle.sku.name if s.bottle and s.bottle.sku else 'Coca-Cola',
+                'region': s.region,
+                'created_at': s.created_at.isoformat(),
+            })
+        return Response(data)
+
+
 class LeaderboardView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):

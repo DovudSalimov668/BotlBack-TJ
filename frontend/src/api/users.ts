@@ -1,5 +1,22 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/axios'
+
+export function useScanHistory() {
+  return useQuery({
+    queryKey: ['scan-history'],
+    queryFn: () => api.get('/users/me/scans/').then((r) => r.data),
+    staleTime: 30_000,
+  })
+}
+
+export function useUpdateProfile() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { name?: string; language?: string; region?: string }) =>
+      api.patch('/auth/me/', data).then((r) => r.data),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['me'] }) },
+  })
+}
 
 export function useLeaderboard(region?: string, period?: string) {
   return useQuery({

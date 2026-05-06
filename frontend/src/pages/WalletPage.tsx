@@ -5,14 +5,25 @@ import { Recycle, Leaf, Trophy, ArrowRight, QrCode, Zap, Sparkles, TrendingUp } 
 import { Button } from '@/components/ui/button'
 import { NumberRoll } from '@/components/NumberRoll'
 import { useAuthStore } from '@/store/authStore'
-import { useUserStats } from '@/api/users'
+import { useUserStats, useScanHistory } from '@/api/users'
 import { useMe } from '@/api/auth'
+
+type ScanItem = { id: number; scan_type: 'purchase' | 'recycle'; points_awarded: number; sku: string; region: string; created_at: string }
+
+function timeAgo(iso: string): string {
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000
+  if (diff < 60) return 'только что'
+  if (diff < 3600) return `${Math.floor(diff / 60)} мин назад`
+  if (diff < 86400) return `${Math.floor(diff / 3600)} ч назад`
+  return `${Math.floor(diff / 86400)} дн назад`
+}
 
 export default function WalletPage() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const { data: stats } = useUserStats()
   const { data: me } = useMe()
+  const { data: scanHistory } = useScanHistory()
   const meData = me as { total_points?: number; bottles_recycled?: number; co2_saved_kg?: number } | undefined
 
   const points = meData?.total_points ?? user?.total_points ?? 0
@@ -195,18 +206,18 @@ export default function WalletPage() {
             </div>
             <span className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase">Live</span>
           </div>
-          {points === 0 ? (
+          {!scanHistory?.length ? (
             <p className="text-gray-400 text-sm text-center py-10">{t('wallet.empty')}</p>
           ) : (
             <div className="divide-y divide-gray-50">
-              {[...Array(5)].map((_, i) => {
-                const isRecycle = i % 2 === 0
+              {(scanHistory as ScanItem[]).slice(0, 8).map((scan, i) => {
+                const isRecycle = scan.scan_type === 'recycle'
                 return (
                   <motion.div
-                    key={i}
+                    key={scan.id}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + i * 0.06 }}
+                    transition={{ delay: 0.4 + i * 0.05 }}
                     className="flex items-center gap-4 px-5 py-3.5"
                   >
                     <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${isRecycle ? 'bg-green-100' : 'bg-red-50'}`}>
@@ -218,10 +229,10 @@ export default function WalletPage() {
                       <p className="text-sm font-semibold text-gray-800 truncate">
                         {isRecycle ? t('wallet.recycle') : t('wallet.purchase')}
                       </p>
-                      <p className="text-xs text-gray-400">Coca-Cola 0.5L</p>
+                      <p className="text-xs text-gray-400 truncate">{scan.sku} · {timeAgo(scan.created_at)}</p>
                     </div>
                     <span className={`font-black text-sm flex-shrink-0 ${isRecycle ? 'text-brand-eco' : 'text-brand-red'}`}>
-                      +{isRecycle ? 20 : 10}
+                      +{scan.points_awarded}
                     </span>
                   </motion.div>
                 )
