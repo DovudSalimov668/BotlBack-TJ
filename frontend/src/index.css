@@ -5,27 +5,88 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 12%;
+    --foreground: 0 0% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 12%;
+    --card-foreground: 0 0% 8%;
     --primary: 358 100% 48%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 12%;
+    --secondary-foreground: 0 0% 8%;
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 42%;
     --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 12%;
+    --accent-foreground: 0 0% 8%;
     --border: 0 0% 90%;
     --input: 0 0% 90%;
     --ring: 358 100% 48%;
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 }
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-background text-foreground; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
+@layer utilities {
+  /* Glassmorphism — light (on dark/colored backgrounds) */
+  .glass {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  /* Glassmorphism — white (on light backgrounds) */
+  .glass-white {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Mesh gradient hero — dark red/black */
+  .mesh-hero {
+    background:
+      radial-gradient(ellipse at 20% 15%, rgba(244, 0, 9, 0.7) 0px, transparent 55%),
+      radial-gradient(ellipse at 85% 5%,  rgba(180, 0, 6, 0.5) 0px, transparent 45%),
+      radial-gradient(ellipse at 5%  85%, rgba(220, 0, 10, 0.4) 0px, transparent 50%),
+      radial-gradient(ellipse at 90% 90%, rgba(100, 0, 4, 0.6) 0px, transparent 40%),
+      #0A0A0A;
+  }
+
+  /* Mesh gradient — light red for consumer pages */
+  .mesh-red {
+    background:
+      radial-gradient(ellipse at 0% 0%,   rgba(244, 0, 9, 0.95) 0px, transparent 60%),
+      radial-gradient(ellipse at 100% 0%,  rgba(180, 0, 6, 0.8) 0px, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(100, 0, 4, 0.9) 0px, transparent 60%),
+      #D40007;
+  }
+
+  /* Subtle noise texture */
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Display heading utility */
+  .display {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+}
+
+/* Leaflet z-index fix */
 .leaflet-container { z-index: 1; }

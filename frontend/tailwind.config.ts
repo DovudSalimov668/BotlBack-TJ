@@ -9,6 +9,9 @@ export default {
         brand: {
           red: '#F40009',
           charcoal: '#1E1E1E',
+          dark: '#0A0A0A',
+          gold: '#FFB800',
+          eco: '#00A651',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

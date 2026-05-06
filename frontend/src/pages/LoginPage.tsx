@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Phone, Hash, ArrowLeft } from 'lucide-react'
+import { Phone, Hash, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLogin, useRegister } from '@/api/auth'
 
@@ -37,27 +37,45 @@ export default function LoginPage() {
     }
   }
 
+  const inputClass =
+    'w-full bg-white/8 border border-white/15 rounded-2xl px-4 py-3.5 text-white placeholder-white/30 text-sm focus:outline-none focus:border-brand-red focus:bg-white/12 transition-all'
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-red to-red-800 flex flex-col">
-      <div className="p-6">
+    <div className="min-h-screen mesh-hero noise relative flex flex-col">
+      {/* Back button */}
+      <div className="p-6 relative z-10">
         <Link to="/">
-          <button className="text-white/80 hover:text-white flex items-center gap-1">
-            <ArrowLeft size={20} />
+          <button className="glass text-white/70 hover:text-white flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-all">
+            <ArrowLeft size={16} />
+            Назад
           </button>
         </Link>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center px-6">
+      {/* Branding */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 text-center px-6 mb-6"
+      >
+        <h1 className="display text-white text-4xl">BotlBack</h1>
+        <p className="text-white/40 text-xs font-semibold tracking-widest uppercase mt-1">Coca-Cola İçecek • Tajikistan</p>
+      </motion.div>
+
+      {/* Glass card */}
+      <div className="flex-1 flex flex-col justify-center px-6 pb-12 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl p-8 shadow-2xl"
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="glass rounded-3xl p-7 shadow-2xl"
         >
-          <div className="text-center mb-8">
-            <div className="text-4xl mb-3">🍾</div>
-            <h1 className="text-2xl font-black text-brand-charcoal">BotlBack TJ</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              {mode === 'login' ? t('auth.login') : t('auth.register')}
+          <div className="mb-7">
+            <h2 className="text-white text-xl font-black tracking-tight">
+              {mode === 'login' ? 'Добро пожаловать' : 'Создать аккаунт'}
+            </h2>
+            <p className="text-white/50 text-sm mt-1">
+              {mode === 'login' ? 'Введите номер и код подтверждения' : 'Заполните данные для регистрации'}
             </p>
           </div>
 
@@ -65,70 +83,104 @@ export default function LoginPage() {
             <form onSubmit={handlePhoneSubmit} className="space-y-4">
               {mode === 'register' && (
                 <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1">{t('auth.name')}</label>
+                  <label className="text-white/60 text-xs font-semibold tracking-wide uppercase block mb-2">
+                    Ваше имя
+                  </label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Азиз Каримов"
                     required
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red"
+                    className={inputClass}
                   />
                 </div>
               )}
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1">{t('auth.phone')}</label>
+                <label className="text-white/60 text-xs font-semibold tracking-wide uppercase block mb-2">
+                  {t('auth.phone')}
+                </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <Phone className="absolute left-4 top-3.5 text-white/30" size={17} />
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t('auth.phone_placeholder')}
+                    placeholder="+992 900 000 001"
                     required
-                    className="w-full border-2 border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-red"
+                    className={`${inputClass} pl-11`}
                   />
                 </div>
               </div>
-              <Button type="submit" className="w-full" size="lg">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full bg-brand-red hover:bg-red-600 text-white font-black rounded-2xl py-6 shadow-[0_0_24px_rgba(244,0,9,0.35)] gap-2 mt-2"
+              >
                 Продолжить
+                <ArrowRight size={18} />
               </Button>
             </form>
           ) : (
             <form onSubmit={handleOtpSubmit} className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-1">{t('auth.otp')}</label>
+                <label className="text-white/60 text-xs font-semibold tracking-wide uppercase block mb-2">
+                  Код подтверждения
+                </label>
                 <div className="relative">
-                  <Hash className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <Hash className="absolute left-4 top-3.5 text-white/30" size={17} />
                   <input
                     type="number"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="1234"
                     required
-                    className="w-full border-2 border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-red"
+                    className={`${inputClass} pl-11 text-2xl font-black tracking-[0.5em] text-center`}
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-1">{t('auth.otp_hint')}</p>
+                <p className="text-white/30 text-xs mt-2 text-center">{t('auth.otp_hint')}</p>
               </div>
               {(login.isError || register.isError) && (
-                <p className="text-red-500 text-sm text-center">Ошибка входа. Проверьте данные.</p>
+                <div className="bg-brand-red/20 border border-brand-red/30 rounded-xl px-4 py-3">
+                  <p className="text-red-300 text-sm text-center">Неверный код. Попробуйте ещё раз.</p>
+                </div>
               )}
-              <Button type="submit" className="w-full" size="lg" disabled={login.isPending || register.isPending}>
-                {login.isPending || register.isPending ? t('common.loading') : t('auth.login')}
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full bg-brand-red hover:bg-red-600 text-white font-black rounded-2xl py-6 shadow-[0_0_24px_rgba(244,0,9,0.35)] gap-2"
+                disabled={login.isPending || register.isPending}
+              >
+                {login.isPending || register.isPending ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    {t('auth.login')}
+                    <ArrowRight size={18} />
+                  </>
+                )}
               </Button>
-              <button type="button" onClick={() => setStep('phone')} className="w-full text-sm text-gray-500 text-center">
+              <button
+                type="button"
+                onClick={() => setStep('phone')}
+                className="w-full text-sm text-white/40 hover:text-white/70 text-center transition-colors"
+              >
                 {t('common.back')}
               </button>
             </form>
           )}
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 pt-5 border-t border-white/10 text-center">
             <button
               onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setStep('phone') }}
-              className="text-sm text-brand-red font-medium"
+              className="text-sm text-white/50 hover:text-white transition-colors"
             >
-              {mode === 'login' ? t('auth.no_account') + ' ' + t('auth.register') : t('auth.have_account') + ' ' + t('auth.login')}
+              {mode === 'login'
+                ? 'Нет аккаунта? '
+                : 'Уже есть аккаунт? '}
+              <span className="text-brand-red font-bold">
+                {mode === 'login' ? t('auth.register') : t('auth.login')}
+              </span>
             </button>
           </div>
         </motion.div>
