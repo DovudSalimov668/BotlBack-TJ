@@ -72,11 +72,11 @@ export default function WalletPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F8F8] pb-28">
+    <div className="min-h-screen bg-[#F8F8F8] pb-28 lg:pb-8">
       <TierUpModal tier={tierUp} onClose={() => setTierUp(null)} />
       <PullToRefresh onRefresh={onRefresh}>
       {/* ── Hero card ── aurora red */}
-      <div className="relative aurora overflow-hidden px-6 pt-12 pb-28">
+      <div className="relative aurora overflow-hidden px-6 lg:px-12 pt-12 pb-28">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -171,9 +171,9 @@ export default function WalletPage() {
       </div>
 
       {/* ── Bento stats ── */}
-      <div className="px-5 -mt-16 relative z-10 space-y-3">
+      <div className="px-5 lg:px-8 -mt-16 relative z-10 space-y-3 lg:max-w-5xl lg:mx-auto">
         {/* 3-col stats row */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 lg:grid-cols-3 gap-3">
           {[
             { icon: Recycle, value: recycled, label: 'Сдано', unit: 'бут.', accent: '#00A651', tint: 'rgba(0,166,81,0.08)' },
             { icon: Leaf, value: co2, label: 'CO₂', unit: 'кг', accent: '#10B981', tint: 'rgba(16,185,129,0.08)' },
@@ -223,7 +223,7 @@ export default function WalletPage() {
         </motion.div>
 
         {/* Achievements + Leaderboard quick links */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Link to="/achievements">
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
@@ -259,7 +259,7 @@ export default function WalletPage() {
         </div>
 
         {/* CTA row */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <Link to="/rewards" className="col-span-1">
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}

@@ -74,7 +74,7 @@ export default function ScanResultPage() {
   const isRecycle = result?.type === 'recycle'
 
   return (
-    <div className="min-h-screen aurora relative flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+    <div className="min-h-screen aurora relative flex flex-col items-center justify-center p-6 lg:p-12 text-center overflow-hidden">
       {/* expanding ring pulses behind check */}
       {[0, 1, 2].map((i) => (
         <motion.div

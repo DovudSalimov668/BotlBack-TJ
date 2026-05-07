@@ -212,7 +212,7 @@ export default function LeaderboardPage() {
   const rest  = leaders?.slice(3)   ?? []
 
   return (
-    <div className="min-h-screen bg-[#F8F8F8] pb-28">
+    <div className="min-h-screen bg-[#F8F8F8] pb-28 lg:pb-8">
       {/* ── Header ── */}
       <div className="relative aurora overflow-hidden px-6 pt-12 pb-4">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="relative z-10">
@@ -251,7 +251,7 @@ export default function LeaderboardPage() {
       </div>
 
       {/* Region filter */}
-      <div className="px-5 py-3 flex gap-2 overflow-x-auto hide-scroll">
+      <div className="px-5 lg:px-8 py-3 flex gap-2 overflow-x-auto hide-scroll lg:max-w-5xl lg:mx-auto">
         {regionOptions.map((r) => (
           <motion.button
             key={r.key}
@@ -286,7 +286,7 @@ export default function LeaderboardPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="px-5 space-y-4"
+            className="px-5 lg:px-8 space-y-4 lg:max-w-5xl lg:mx-auto"
           >
             {/* ── 3D Podium ── */}
             {top3.length >= 3 && (

@@ -222,7 +222,7 @@ export default function MapPage() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 340 }}
-              className="fixed bottom-0 left-0 right-0 z-[1200] max-h-[75dvh] flex flex-col rounded-t-3xl overflow-hidden"
+              className="fixed bottom-0 left-0 lg:left-64 right-0 z-[1200] max-h-[75dvh] flex flex-col rounded-t-3xl overflow-hidden"
               style={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)' }}
             >
               <div className="flex items-center justify-between px-6 pt-4 pb-3 flex-shrink-0">

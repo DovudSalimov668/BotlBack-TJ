@@ -172,7 +172,7 @@ export default function RewardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F8F8] pb-28 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F8F8F8] pb-28 lg:pb-8 relative overflow-hidden">
 
       {/* floating -pts label */}
       <AnimatePresence>
@@ -199,15 +199,15 @@ export default function RewardsPage() {
       </div>
 
       {/* ── Prize grid ── */}
-      <div className="px-4 py-6">
+      <div className="px-4 lg:px-8 py-6 lg:max-w-6xl lg:mx-auto">
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-52 bg-gray-200 rounded-3xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {prizes?.map((prize: Prize, i: number) => {
               const canAfford = points >= prize.points_cost
               const inStock   = prize.stock_quantity !== 0

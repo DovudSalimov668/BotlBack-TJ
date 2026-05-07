@@ -47,9 +47,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F8F8] pb-28">
+    <div className="min-h-screen bg-[#F8F8F8] pb-28 lg:pb-8">
       {/* ── Hero ── */}
-      <div className="relative aurora overflow-hidden px-6 pt-12 pb-8">
+      <div className="relative aurora overflow-hidden px-6 lg:px-12 pt-12 pb-8">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,7 +75,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Stats strip */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-3">
             {[
               { icon: Zap,     value: points,   label: 'pts',    color: '#FFB800', prefix: '' },
               { icon: Recycle, value: recycled,  label: 'бут.',   color: '#00A651', prefix: '' },
@@ -101,7 +101,7 @@ export default function ProfilePage() {
         </motion.div>
       </div>
 
-      <div className="px-5 py-5 space-y-4">
+      <div className="px-5 lg:px-8 py-5 space-y-4 lg:max-w-3xl lg:mx-auto">
         {/* Language */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

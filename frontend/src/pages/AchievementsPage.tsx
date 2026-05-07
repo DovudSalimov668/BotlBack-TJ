@@ -21,7 +21,7 @@ export default function AchievementsPage() {
   const progress = total > 0 ? (unlocked / total) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-[#F8F8F8] pb-28">
+    <div className="min-h-screen bg-[#F8F8F8] pb-28 lg:pb-8">
       {/* Hero */}
       <div className="relative aurora overflow-hidden px-6 pt-12 pb-8">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="relative z-10">
@@ -68,13 +68,13 @@ export default function AchievementsPage() {
       </div>
 
       {/* Grid */}
-      <div className="px-5 py-6">
+      <div className="px-5 lg:px-8 py-6 lg:max-w-4xl lg:mx-auto">
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[...Array(6)].map((_, i) => <CardSkeleton key={i} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {achievements.map((a, i) => (
               <motion.button
                 key={a.code}
