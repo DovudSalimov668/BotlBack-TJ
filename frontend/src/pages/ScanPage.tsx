@@ -4,7 +4,17 @@ import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Html5QrcodeScanner } from 'html5-qrcode'
 import { useScanBottle } from '@/api/bottles'
-import { ArrowLeft, Zap, QrCode } from 'lucide-react'
+import { ArrowLeft, Zap, QrCode, Keyboard, ChevronRight } from 'lucide-react'
+
+const DEMO_CODES = [
+  { code: 'BTL-DEMO-0001', label: 'Coca-Cola 0.5L', type: 'bottle' },
+  { code: 'BTL-DEMO-0002', label: 'Fanta 0.5L',     type: 'bottle' },
+  { code: 'BTL-DEMO-0003', label: 'Sprite 1L',       type: 'bottle' },
+  { code: 'BTL-DEMO-0004', label: 'Bonaqua 0.5L',    type: 'bottle' },
+  { code: 'BTL-DEMO-0005', label: 'Fuse Tea 0.5L',   type: 'bottle' },
+  { code: 'RP-DEMO-001',   label: 'Базар Мехргон',   type: 'recycle' },
+  { code: 'RP-DS-002',     label: 'Душанбе Сити',    type: 'recycle' },
+]
 
 export default function ScanPage() {
   const { t } = useTranslation()
@@ -13,46 +23,52 @@ export default function ScanPage() {
   const hasScannedRef = useRef(false)
   const mutation = useScanBottle()
   const [scanState, setScanState] = useState<'idle' | 'detected' | 'processing'>('idle')
+  const [manualMode, setManualMode] = useState(false)
+  const [manualCode, setManualCode] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const submitCode = async (code: string) => {
+    const trimmed = code.trim().toUpperCase()
+    if (!trimmed || hasScannedRef.current) return
+    hasScannedRef.current = true
+    setScanState('detected')
+    setTimeout(() => setScanState('processing'), 300)
+    try {
+      const data = await mutation.mutateAsync({ qr_code: trimmed })
+      navigate(`/scan/result/${data.scan_id}`, {
+        state: {
+          points: data.points_awarded,
+          total: data.total_points,
+          sku: data.sku,
+          type: 'purchase',
+          streak_days: data.streak_days,
+          unlocked_achievements: data.unlocked_achievements ?? [],
+        },
+      })
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { code?: string } } }
+      if (error?.response?.data?.code === 'already_scanned') {
+        navigate('/scan/result/error', { state: { error: t('scan.already_scanned') } })
+      } else {
+        hasScannedRef.current = false
+        setScanState('idle')
+      }
+    }
+  }
 
   useEffect(() => {
+    if (manualMode) return
     scannerRef.current = new Html5QrcodeScanner(
       'qr-reader',
       { fps: 10, qrbox: { width: 240, height: 240 }, aspectRatio: 1.0 },
       false,
     )
     scannerRef.current.render(
-      async (decodedText) => {
-        if (!hasScannedRef.current) {
-          hasScannedRef.current = true
-          setScanState('detected')
-          setTimeout(() => setScanState('processing'), 300)
-          try {
-            const data = await mutation.mutateAsync({ qr_code: decodedText.trim() })
-            navigate(`/scan/result/${data.scan_id}`, {
-              state: {
-                points: data.points_awarded,
-                total: data.total_points,
-                sku: data.sku,
-                type: 'purchase',
-                streak_days: data.streak_days,
-                unlocked_achievements: data.unlocked_achievements ?? [],
-              },
-            })
-          } catch (err: unknown) {
-            const error = err as { response?: { data?: { code?: string } } }
-            if (error?.response?.data?.code === 'already_scanned') {
-              navigate('/scan/result/error', { state: { error: t('scan.already_scanned') } })
-            } else {
-              hasScannedRef.current = false
-              setScanState('idle')
-            }
-          }
-        }
-      },
+      (decodedText) => submitCode(decodedText),
       () => {},
     )
     return () => { scannerRef.current?.clear().catch(() => {}) }
-  }, [])
+  }, [manualMode])
 
   /* Corner bracket */
   const Corner = ({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) => {
@@ -253,17 +269,88 @@ export default function ScanPage() {
         </motion.div>
       </div>
 
-      {/* Tip */}
+      {/* Manual input / demo codes panel */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
-        className="px-6 pb-12 text-center relative z-10"
+        className="px-6 pb-10 relative z-10 space-y-3"
       >
-        <div className="inline-flex items-center gap-2 rounded-2xl px-5 py-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <Zap size={14} className="text-brand-gold" style={{ filter: 'drop-shadow(0 0 4px rgba(255,184,0,0.6))' }} />
-          <p className="text-white/35 text-xs">{t('scan.tip')}</p>
+        {/* Toggle button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => { setManualMode((v) => !v); setManualCode(''); hasScannedRef.current = false }}
+            className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-bold transition-all"
+            style={manualMode
+              ? { background: 'rgba(244,0,9,0.15)', border: '1px solid rgba(244,0,9,0.3)', color: '#F40009' }
+              : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }
+            }
+          >
+            <Keyboard size={13} />
+            {manualMode ? 'Закрыть ввод' : 'Ввести код вручную'}
+          </button>
         </div>
+
+        <AnimatePresence>
+          {manualMode && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 260 }}
+              className="overflow-hidden"
+            >
+              {/* Text input */}
+              <div className="flex gap-2 mb-3">
+                <input
+                  ref={inputRef}
+                  autoFocus
+                  value={manualCode}
+                  onChange={(e) => setManualCode(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => e.key === 'Enter' && submitCode(manualCode)}
+                  placeholder="BTL-DEMO-0001"
+                  className="flex-1 rounded-2xl px-4 py-3 text-white text-sm font-mono font-bold focus:outline-none"
+                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(244,0,9,0.3)' }}
+                />
+                <button
+                  onClick={() => submitCode(manualCode)}
+                  disabled={!manualCode.trim() || mutation.isPending}
+                  className="w-12 h-12 rounded-2xl bg-brand-red flex items-center justify-center flex-shrink-0 disabled:opacity-40"
+                >
+                  <ChevronRight size={20} className="text-white" />
+                </button>
+              </div>
+
+              {/* Quick-tap demo codes */}
+              <p className="text-white/25 text-[10px] font-bold uppercase tracking-widest mb-2 pl-1">Демо-коды</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {DEMO_CODES.map(({ code, label, type }) => (
+                  <button
+                    key={code}
+                    onClick={() => submitCode(code)}
+                    className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-left transition-all hover:brightness-110 active:scale-95"
+                    style={{ background: type === 'bottle' ? 'rgba(244,0,9,0.12)' : 'rgba(0,166,81,0.12)', border: `1px solid ${type === 'bottle' ? 'rgba(244,0,9,0.2)' : 'rgba(0,166,81,0.2)'}` }}
+                  >
+                    <span className="text-base">{type === 'bottle' ? '🍾' : '♻️'}</span>
+                    <div className="min-w-0">
+                      <p className="text-white/80 text-[11px] font-bold truncate">{label}</p>
+                      <p className="text-white/30 text-[10px] font-mono truncate">{code}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!manualMode && (
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-2xl px-5 py-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <Zap size={14} className="text-brand-gold" style={{ filter: 'drop-shadow(0 0 4px rgba(255,184,0,0.6))' }} />
+              <p className="text-white/35 text-xs">{t('scan.tip')}</p>
+            </div>
+          </div>
+        )}
       </motion.div>
 
       {/* Vignette */}
