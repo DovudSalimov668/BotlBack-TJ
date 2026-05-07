@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, MapPin, TrendingUp, Megaphone, Store, LogOut, BarChart3 } from 'lucide-react'
+import { LayoutDashboard, MapPin, TrendingUp, Megaphone, Store, LogOut, BarChart3, QrCode } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
 
@@ -10,6 +10,7 @@ const navItems = [
   { path: '/admin/timeseries', icon: TrendingUp,      label: 'Динамика'  },
   { path: '/admin/campaigns',  icon: Megaphone,       label: 'Кампании'  },
   { path: '/admin/outlets',    icon: Store,           label: 'Точки'     },
+  { path: '/admin/qrcodes',    icon: QrCode,          label: 'QR-коды'   },
 ]
 
 export default function AdminLayout() {

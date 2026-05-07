@@ -25,6 +25,7 @@ const GeographicPage = lazy(() => import('@/pages/admin/GeographicPage'))
 const TimeSeriesPage = lazy(() => import('@/pages/admin/TimeSeriesPage'))
 const CampaignsPage = lazy(() => import('@/pages/admin/CampaignsPage'))
 const OutletsPage = lazy(() => import('@/pages/admin/OutletsPage'))
+const QRCodesPage = lazy(() => import('@/pages/admin/QRCodesPage'))
 
 function LoadingSpinner() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
               <Route path="timeseries" element={<TimeSeriesPage />} />
               <Route path="campaigns" element={<CampaignsPage />} />
               <Route path="outlets" element={<OutletsPage />} />
+              <Route path="qrcodes" element={<QRCodesPage />} />
             </Route>
           </Routes>
         </Suspense>
