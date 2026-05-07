@@ -33,13 +33,22 @@ class OverviewView(APIView):
             scan_type='recycle', user__isnull=False
         ).select_related('user', 'bottle__sku').order_by('-created_at')[:10]
         feed = []
-        for s in recent_scans:
+        recent_all = Scan.objects.filter(
+            user__isnull=False
+        ).select_related('user', 'bottle__sku').order_by('-created_at')[:12]
+        for s in recent_all:
             name = s.user.name or s.user.phone
             parts = name.split()
             anon = f"{parts[0]} {parts[1][0]}." if len(parts) > 1 else name
+            sku_name = s.bottle.sku.name if s.bottle and s.bottle.sku else 'бутылку'
+            if s.scan_type == 'recycle':
+                text = f"{anon} сдал(а) {sku_name} на переработку (+20 pts)"
+            else:
+                text = f"{anon} купил(а) {sku_name} (+10 pt)"
             feed.append({
-                'text': f"{anon} переработал(а) бутылку {s.bottle.sku.name}",
-                'region': s.get_region_display(),
+                'text': text,
+                'region': s.region or 'dushanbe',
+                'type': s.scan_type,
                 'time': s.created_at.isoformat(),
             })
         return Response({

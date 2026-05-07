@@ -1,9 +1,10 @@
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import api from '@/lib/axios'
 import { useAuthStore } from '@/store/authStore'
 import { queryClient } from '@/lib/queryClient'
 
-interface UserData {
+export interface UserData {
   id: number
   phone: string
   name: string
@@ -13,18 +14,28 @@ interface UserData {
   total_points: number
   bottles_recycled: number
   co2_saved_kg: number
+  streak_days: number
+  last_scan_date: string | null
+  created_at: string
 }
 
 export function useMe() {
   const { isAuthenticated, setUser } = useAuthStore()
+  const qc = useQueryClient()
   const query = useQuery<UserData>({
     queryKey: ['me'],
     queryFn: () => api.get('/auth/me/').then((r) => r.data),
     enabled: isAuthenticated,
+    staleTime: 30_000,
   })
-  if (query.data) {
-    setUser(query.data)
-  }
+
+  // Sync to auth store after fetch — not during render
+  useEffect(() => {
+    if (query.data) {
+      setUser(query.data)
+    }
+  }, [query.data])
+
   return query
 }
 

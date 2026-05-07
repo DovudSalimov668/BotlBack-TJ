@@ -153,7 +153,7 @@ export default function ProfilePage() {
               <div className="ml-auto w-4 h-4 border-2 border-brand-red border-t-transparent rounded-full animate-spin" />
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
             {regions.map((r) => {
               const isActive = currentRegion === r
               return (

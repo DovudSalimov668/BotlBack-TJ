@@ -13,12 +13,17 @@ TAJIK_FIRST_NAMES = [
     'Хуршед', 'Камол', 'Зафар', 'Сироджиддин', 'Мухаммад', 'Алишер', 'Тимур',
     'Фарангиз', 'Манижа', 'Нилуфар', 'Ситора', 'Мадина', 'Гулнора', 'Нозима',
     'Нарима', 'Дилноза', 'Сабина', 'Зарина', 'Шахло', 'Наргис', 'Мунира', 'Лайло',
+    'Бобур', 'Санжар', 'Ихтиёр', 'Умид', 'Жасур', 'Акбар', 'Суҳроб', 'Нодир',
+    'Фарид', 'Элёр', 'Гулбаҳор', 'Барно', 'Муаззам', 'Хилола', 'Матлуба', 'Умида',
+    'Шерзод', 'Жавлон', 'Нурали', 'Давлат', 'Хасан', 'Парвиз', 'Некруз', 'Вохид',
 ]
 TAJIK_LAST_NAMES = [
     'Каримов', 'Рахимов', 'Саидов', 'Назаров', 'Миров', 'Холов', 'Турсунов',
     'Усмонов', 'Ахмедов', 'Юсупов', 'Баротов', 'Маматов', 'Эргашев', 'Султонов',
     'Хасанов', 'Каримова', 'Рахимова', 'Саидова', 'Назарова', 'Турсунова',
     'Ахмедова', 'Юсупова', 'Маматова', 'Эргашева', 'Султонова', 'Хасанова',
+    'Рустамов', 'Ниёзов', 'Шарипов', 'Давлатов', 'Исмоилов', 'Раҳматов',
+    'Бобоев', 'Ҳасанов', 'Муродов', 'Олимов', 'Соатов', 'Файзиев', 'Темиров',
 ]
 
 RECYCLING_POINTS = [
@@ -60,21 +65,47 @@ SKUS = [
     ('Fanta Апельсин 0.5L PET', 'fanta', 500, 'PET'),
     ('Sprite 1L PET', 'sprite', 1000, 'PET'),
     ('Bonaqua 0.5L PET', 'bonaqua', 500, 'PET'),
+    ('Fuse Tea Лимон 0.5L PET', 'fanta', 500, 'PET'),
+    ('Coca-Cola Zero 0.5L PET', 'coca-cola', 500, 'PET'),
 ]
 
 PRIZES = [
-    ('5 сом на Alif Mobi', '5 сомонӣ ба Alif Mobi', 50, 10),
-    ('10 сом на Alif Mobi', '10 сомонӣ ба Alif Mobi', 90, 5),
-    ('25 сом на Alif Mobi', '25 сомонӣ ба Alif Mobi', 200, 3),
-    ('Бесплатная Bonaqua 0.5L', 'Bonaqua 0.5L ройгон', 30, 50),
-    ('Сумка Coca-Cola', 'Сумкаи Coca-Cola', 150, 20),
-    ('Футболка Coca-Cola', 'Куртаи Coca-Cola', 300, 10),
-    ('Магнит Coca-Cola', 'Оҳанрабои Coca-Cola', 20, 100),
-    ('Бесплатный Fuse Tea', 'Fuse Tea ройгон', 25, 30),
+    ('5 сом на Alif Mobi', '5 сомонӣ ба Alif Mobi', 50, 100),
+    ('10 сом на Alif Mobi', '10 сомонӣ ба Alif Mobi', 90, 50),
+    ('25 сом на Alif Mobi', '25 сомонӣ ба Alif Mobi', 200, 20),
+    ('Бесплатная Bonaqua 0.5L', 'Bonaqua 0.5L ройгон', 30, 200),
+    ('Сумка Coca-Cola', 'Сумкаи Coca-Cola', 150, 30),
+    ('Футболка Coca-Cola', 'Куртаи Coca-Cola', 300, 15),
+    ('Магнит Coca-Cola', 'Оҳанрабои Coca-Cola', 20, 500),
+    ('Бесплатный Fuse Tea', 'Fuse Tea ройгон', 25, 100),
+    ('Скидка 50% на Coca-Cola', '50% тахфиф', 75, 50),
+    ('Рюкзак Coca-Cola', 'Рюкзак Coca-Cola', 500, 5),
 ]
 
-REGION_WEIGHTS = {'dushanbe': 60, 'sughd': 20, 'khatlon': 12, 'gbao': 3, 'rrs': 5}
-RECYCLING_RATES = {'dushanbe': 0.65, 'sughd': 0.40, 'khatlon': 0.30, 'gbao': 0.25, 'rrs': 0.20}
+REGION_WEIGHTS = {'dushanbe': 55, 'sughd': 22, 'khatlon': 13, 'gbao': 4, 'rrs': 6}
+RECYCLING_RATES = {'dushanbe': 0.65, 'sughd': 0.42, 'khatlon': 0.32, 'gbao': 0.25, 'rrs': 0.22}
+
+# Test accounts: phone → (name, region, target_points, tier_desc)
+TEST_ACCOUNTS = [
+    ('+992900000001', 'Комрон Рустамов',   'dushanbe', 'demo'),
+    ('+992900000002', 'Лола Саидова',       'dushanbe', 'platinum'),   # 1200+ pts
+    ('+992900000003', 'Бахром Каримов',     'sughd',    'gold'),        # 600+ pts
+    ('+992900000004', 'Ситора Назарова',    'khatlon',  'silver'),      # 300+ pts
+    ('+992900000005', 'Нодир Юсупов',       'gbao',     'bronze'),      # <200 pts
+    ('+992900000006', 'Зарина Холова',      'rrs',      'bronze'),
+    ('+992900000007', 'Алишер Турсунов',    'dushanbe', 'gold'),
+    ('+992900000008', 'Манижа Ахмедова',    'sughd',    'silver'),
+    ('+992900000009', 'Фируз Маматов',      'khatlon',  'bronze'),
+    ('+992900000010', 'Шахзод Эргашев',     'dushanbe', 'platinum'),
+]
+
+TIER_SCAN_COUNTS = {
+    'platinum': (80, 120, 0.85),   # (purchase_count, recycle_count_approx, recycle_rate)
+    'gold':     (45, 55,  0.75),
+    'silver':   (20, 25,  0.65),
+    'bronze':   (8,  10,  0.40),
+    'demo':     (30, 23,  0.77),
+}
 
 
 def gen_qr(prefix='BTL', length=8):
@@ -83,12 +114,13 @@ def gen_qr(prefix='BTL', length=8):
 
 
 def get_random_hour():
-    weights = [2, 1, 1, 1, 1, 2, 5, 10, 15, 18, 20, 22, 25, 22, 18, 15, 18, 20, 28, 25, 20, 15, 8, 4]
+    # Peak hours: lunch (12-14) and evening/iftar (18-20)
+    weights = [1, 1, 1, 1, 1, 2, 5, 10, 15, 18, 20, 22, 28, 25, 20, 16, 18, 22, 30, 28, 22, 15, 8, 3]
     return random.choices(range(24), weights=weights, k=1)[0]
 
 
 def random_dt_in_range(start_date, end_date):
-    delta = (end_date - start_date).days
+    delta = max((end_date - start_date).days, 1)
     day = start_date + timedelta(days=random.randint(0, delta))
     hour = get_random_hour()
     minute = random.randint(0, 59)
@@ -96,7 +128,7 @@ def random_dt_in_range(start_date, end_date):
 
 
 class Command(BaseCommand):
-    help = 'Seed demo data for BotlBack TJ'
+    help = 'Seed rich demo data for BotlBack TJ hackathon presentation'
 
     def handle(self, *args, **options):
         from apps.users.models import User
@@ -106,7 +138,7 @@ class Command(BaseCommand):
         from apps.rewards.models import Prize, Redemption
         from apps.analytics.models import Campaign
 
-        self.stdout.write('🧹 Clearing existing data...')
+        self.stdout.write('🧹  Clearing existing data...')
         Redemption.objects.all().delete()
         Scan.objects.all().delete()
         Bottle.objects.all().delete()
@@ -116,190 +148,225 @@ class Command(BaseCommand):
         SKU.objects.all().delete()
         User.objects.filter(is_superuser=False).delete()
 
-        self.stdout.write('👤 Creating admin user...')
-        if not User.objects.filter(phone='admin').exists():
-            admin = User.objects.create_user(phone='admin', name='Admin')
-            admin.set_password('Botlback2026!')
-            admin.is_staff = True
-            admin.is_superuser = True
-            admin.save()
-        else:
-            admin = User.objects.get(phone='admin')
+        # ── Admin ──
+        self.stdout.write('👤  Creating admin...')
+        admin = User.objects.create_user(phone='admin', name='Администратор')
+        admin.set_password('Botlback2026!')
+        admin.is_staff = True
+        admin.is_superuser = True
+        admin.save()
 
-        self.stdout.write('📦 Creating SKUs...')
+        # ── SKUs ──
+        self.stdout.write('📦  Creating SKUs...')
         sku_objs = []
         for name, brand, vol, pkg in SKUS:
-            sku = SKU.objects.create(name=name, brand=brand, volume_ml=vol, package_type=pkg)
-            sku_objs.append(sku)
+            sku_objs.append(SKU.objects.create(name=name, brand=brand, volume_ml=vol, package_type=pkg))
 
-        self.stdout.write('📍 Creating recycling points...')
+        # ── Recycling points ──
+        self.stdout.write('📍  Creating recycling points...')
         for name, name_tg, addr, lat, lon, region, qr in RECYCLING_POINTS:
             RecyclingPoint.objects.get_or_create(
                 qr_code=qr,
-                defaults=dict(name=name, name_tg=name_tg, address=addr, latitude=lat, longitude=lon, region=region)
+                defaults=dict(name=name, name_tg=name_tg, address=addr,
+                              latitude=lat, longitude=lon, region=region)
             )
         rp_by_region = {r: list(RecyclingPoint.objects.filter(region=r)) for r in REGION_WEIGHTS}
+        # Fallback: if region has no recycling points, use dushanbe
+        for r in REGION_WEIGHTS:
+            if not rp_by_region[r]:
+                rp_by_region[r] = rp_by_region['dushanbe']
 
-        self.stdout.write('🎁 Creating prizes...')
+        # ── Prizes ──
+        self.stdout.write('🎁  Creating prizes...')
         for name, name_tg, cost, stock in PRIZES:
             Prize.objects.create(name=name, name_tg=name_tg, points_cost=cost, stock_quantity=stock)
 
-        self.stdout.write('👥 Creating 150 users...')
+        # ── 500 random users ──
+        self.stdout.write('👥  Creating 500 users...')
         regions = list(REGION_WEIGHTS.keys())
         region_weights = list(REGION_WEIGHTS.values())
         users = []
-        for i in range(150):
+        used_phones = set()
+        for i in range(500):
             first = random.choice(TAJIK_FIRST_NAMES)
-            last = random.choice(TAJIK_LAST_NAMES)
+            last  = random.choice(TAJIK_LAST_NAMES)
             region = random.choices(regions, weights=region_weights, k=1)[0]
-            phone = f"+992{random.randint(900000002, 999999999)}"
-            user = User.objects.create_user(
-                phone=phone,
-                name=f"{first} {last}",
-                region=region,
-            )
+            phone = f"+992{random.randint(700000002, 999999999)}"
+            while phone in used_phones:
+                phone = f"+992{random.randint(700000002, 999999999)}"
+            used_phones.add(phone)
+            user = User.objects.create_user(phone=phone, name=f"{first} {last}", region=region)
             users.append(user)
 
-        self.stdout.write('🍾 Creating 2000 bottles...')
-        bottles = []
-        magic_qrs = ['BTL-DEMO-0001', 'BTL-DEMO-0002']
+        # ── 5000 bottles ──
+        self.stdout.write('🍾  Creating 5000 bottles...')
+        magic_qrs = ['BTL-DEMO-0001', 'BTL-DEMO-0002', 'BTL-DEMO-0003', 'BTL-DEMO-0004', 'BTL-DEMO-0005']
         for mqr in magic_qrs:
-            b = Bottle.objects.create(
-                qr_code=mqr,
-                sku=sku_objs[0],
-                batch_number='DEMO-BATCH',
-                produced_at=date(2026, 1, 1),
+            Bottle.objects.create(
+                qr_code=mqr, sku=sku_objs[0],
+                batch_number='DEMO-BATCH', produced_at=date(2026, 1, 1),
             )
-            bottles.append(b)
-        for i in range(1998):
+        batch = []
+        existing_qrs = set(magic_qrs)
+        for _ in range(4995):
             sku = random.choice(sku_objs)
             qr = gen_qr()
-            while Bottle.objects.filter(qr_code=qr).exists():
+            while qr in existing_qrs:
                 qr = gen_qr()
-            b = Bottle.objects.create(
-                qr_code=qr,
-                sku=sku,
+            existing_qrs.add(qr)
+            batch.append(Bottle(
+                qr_code=qr, sku=sku,
                 batch_number=f"BATCH-{random.randint(1000, 9999)}",
-                produced_at=date(2026, random.randint(1, 4), random.randint(1, 28)),
-            )
-            bottles.append(b)
+                produced_at=date(2026, random.randint(1, 5), random.randint(1, 28)),
+            ))
+        Bottle.objects.bulk_create(batch, batch_size=500)
 
-        self.stdout.write('📱 Creating ~3500 scans over 30 days...')
-        end_date = date.today()
-        start_date = end_date - timedelta(days=30)
-        scan_objs = []
-        # Reserve 33 bottles for demo user; use at most 1965 for main pool
+        # ── ~8000 scans over 60 days ──
+        self.stdout.write('📱  Creating ~8000 scans over 60 days...')
+        end_date   = date.today()
+        start_date = end_date - timedelta(days=60)
+
         all_regular = list(Bottle.objects.exclude(qr_code__in=magic_qrs).order_by('?'))
-        random.shuffle(all_regular)
-        demo_reserve = all_regular[:33]
-        demo_reserve_pks = {b.pk for b in demo_reserve}
-        bottle_pool = [b for b in all_regular[33:] if b.pk not in demo_reserve_pks][:1965]
-        random.shuffle(bottle_pool)
+        # Reserve bottles for test accounts (10 accounts × max 120 = 1200 bottles)
+        test_reserve = all_regular[:1200]
+        pool = all_regular[1200:]
+        random.shuffle(pool)
 
-        # Generate purchase-first: for each bottle, optionally follow with recycle.
-        # This guarantees recycle_count <= purchase_count per region (no >100% rates).
-        for bottle in bottle_pool:
+        scan_objs = []
+        updated_bottles = []
+        for bottle in pool:
             user = random.choice(users)
             region = user.region
-            rps = rp_by_region.get(region, rp_by_region['dushanbe'])
+            rps = rp_by_region[region]
             dt_purchase = random_dt_in_range(start_date, end_date)
             scan_objs.append(Scan(
-                bottle=bottle,
-                user=user,
-                scan_type='purchase',
-                region=region,
-                points_awarded=10,
-                created_at=dt_purchase,
+                bottle=bottle, user=user, scan_type='purchase',
+                region=region, points_awarded=10, created_at=dt_purchase,
             ))
             bottle.is_scanned = True
 
             if random.random() < RECYCLING_RATES.get(region, 0.3):
-                rp = random.choice(rps) if rps else None
-                # Recycle happens 1-14 days after purchase
-                offset_days = random.randint(1, 14)
-                dt_recycle = dt_purchase + timedelta(days=offset_days)
+                rp = random.choice(rps)
+                offset = random.randint(1, 14)
+                dt_recycle = dt_purchase + timedelta(days=offset)
                 end_dt = datetime(end_date.year, end_date.month, end_date.day, 23, 59, tzinfo=TJ)
                 if dt_recycle > end_dt:
                     dt_recycle = random_dt_in_range(start_date, end_date)
                 scan_objs.append(Scan(
-                    bottle=bottle,
-                    user=random.choice(users),
-                    scan_type='recycle',
-                    latitude=float(rp.latitude) if rp else None,
-                    longitude=float(rp.longitude) if rp else None,
-                    region=region,
-                    points_awarded=20,
-                    created_at=dt_recycle,
+                    bottle=bottle, user=random.choice(users), scan_type='recycle',
+                    latitude=float(rp.latitude), longitude=float(rp.longitude),
+                    region=region, points_awarded=20, created_at=dt_recycle,
                 ))
                 bottle.is_recycled = True
+            updated_bottles.append(bottle)
 
-        Scan.objects.bulk_create(scan_objs, ignore_conflicts=True)
-        Bottle.objects.bulk_update(
-            [b for b in bottle_pool if b.is_scanned or b.is_recycled],
-            ['is_scanned', 'is_recycled'],
-            batch_size=500,
-        )
+        Scan.objects.bulk_create(scan_objs, ignore_conflicts=True, batch_size=500)
+        Bottle.objects.bulk_update(updated_bottles, ['is_scanned', 'is_recycled'], batch_size=500)
 
-        self.stdout.write('🌟 Creating demo consumer (+992900000001)...')
-        demo_user, _ = User.objects.get_or_create(
-            phone='+992900000001',
-            defaults={'name': 'Комрон Рустамов', 'region': 'dushanbe'}
-        )
-        prize = Prize.objects.first()
-        demo_bottles = demo_reserve[:30]
-        for i, b in enumerate(demo_bottles[:30]):
-            b.is_scanned = True
-            Scan.objects.create(
-                bottle=b, user=demo_user, scan_type='purchase',
-                region='dushanbe', points_awarded=10,
-                created_at=datetime(2026, 4, 10 + i // 3, 12, 0, tzinfo=TJ)
-            )
-        Bottle.objects.bulk_update(demo_bottles[:30], ['is_scanned'])
-        for i, b in enumerate(demo_bottles[:23]):
-            b.is_recycled = True
-            rp = RecyclingPoint.objects.filter(region='dushanbe').first()
-            Scan.objects.create(
-                bottle=b, user=demo_user, scan_type='recycle',
-                latitude=float(rp.latitude), longitude=float(rp.longitude),
-                region='dushanbe', points_awarded=20,
-                created_at=datetime(2026, 4, 11 + i // 3, 18, 30, tzinfo=TJ)
-            )
-        Bottle.objects.bulk_update(demo_bottles[:23], ['is_recycled'])
-        if prize:
-            Redemption.objects.create(
-                user=demo_user, prize=prize, points_spent=prize.points_cost, status='pending'
-            )
+        # ── Test accounts ──
+        self.stdout.write('🧪  Creating 10 test accounts...')
+        test_reserve_bottles = list(test_reserve)
+        idx = 0
+        prize_obj = Prize.objects.first()
+        test_users = []
 
-        self.stdout.write('📅 Creating campaigns...')
+        for phone, name, region, tier in TEST_ACCOUNTS:
+            user, _ = User.objects.get_or_create(
+                phone=phone,
+                defaults={'name': name, 'region': region}
+            )
+            test_users.append(user)
+            purchases, recycles_approx, recycle_rate = TIER_SCAN_COUNTS.get(tier, (10, 5, 0.5))
+            day_base = end_date - timedelta(days=random.randint(10, 55))
+
+            user_scan_objs = []
+            recycled_count = 0
+            rps = rp_by_region[region]
+
+            for j in range(purchases):
+                if idx >= len(test_reserve_bottles):
+                    break
+                b = test_reserve_bottles[idx]; idx += 1
+                b.is_scanned = True
+                dt_p = day_base + timedelta(days=j * random.randint(1, 3), hours=random.randint(8, 21))
+                if dt_p > datetime(end_date.year, end_date.month, end_date.day, 23, 59, tzinfo=TJ):
+                    dt_p = random_dt_in_range(start_date, end_date)
+                user_scan_objs.append(Scan(
+                    bottle=b, user=user, scan_type='purchase',
+                    region=region, points_awarded=10, created_at=dt_p,
+                ))
+                if random.random() < recycle_rate and recycled_count < recycles_approx:
+                    rp = random.choice(rps)
+                    dt_r = dt_p + timedelta(days=random.randint(1, 7))
+                    if dt_r > datetime(end_date.year, end_date.month, end_date.day, 23, 59, tzinfo=TJ):
+                        dt_r = dt_p + timedelta(hours=random.randint(4, 48))
+                    user_scan_objs.append(Scan(
+                        bottle=b, user=user, scan_type='recycle',
+                        latitude=float(rp.latitude), longitude=float(rp.longitude),
+                        region=region, points_awarded=20, created_at=dt_r,
+                    ))
+                    b.is_recycled = True
+                    recycled_count += 1
+
+            Scan.objects.bulk_create(user_scan_objs, ignore_conflicts=True)
+            Bottle.objects.bulk_update(
+                [b for b in test_reserve_bottles[idx - purchases:idx]],
+                ['is_scanned', 'is_recycled'], batch_size=200
+            )
+            # Set streak
+            user.streak_days = random.randint(1, 7) if purchases > 5 else 1
+            user.last_scan_date = end_date - timedelta(days=random.randint(0, 2))
+            user.save(update_fields=['streak_days', 'last_scan_date'])
+
+            # Redemption for higher-tier users
+            if tier in ('platinum', 'gold') and prize_obj:
+                Redemption.objects.create(
+                    user=user, prize=prize_obj,
+                    points_spent=prize_obj.points_cost, status='fulfilled'
+                )
+
+        # ── Campaigns ──
+        self.stdout.write('📅  Creating campaigns...')
         Campaign.objects.create(
             name='Навруз 2026 — Переработай!',
             description='Специальная акция Навруз: +2x очки за переработку с 21 по 31 марта 2026',
-            start_date=date(2026, 3, 21),
-            end_date=date(2026, 3, 31),
-            target_bottles=50000,
-            is_active=False,
+            start_date=date(2026, 3, 21), end_date=date(2026, 3, 31),
+            target_bottles=50000, is_active=False,
         )
         Campaign.objects.create(
             name='Рамазан 2026 — Чистый Таджикистан',
             description='Акция Рамазан: сдай бутылку — получи +5 бонусных очков за переработку',
-            start_date=date(2026, 3, 1),
-            end_date=date(2026, 3, 29),
-            target_bottles=30000,
-            is_active=False,
+            start_date=date(2026, 3, 1), end_date=date(2026, 3, 29),
+            target_bottles=30000, is_active=False,
         )
         Campaign.objects.create(
             name='Лето 2026 — Освежись и переработай',
-            description='Летняя кампания: отслеживаем каждую бутылку',
-            start_date=date(2026, 6, 1),
-            end_date=date(2026, 8, 31),
-            target_bottles=100000,
-            is_active=True,
+            description='Летняя кампания: отслеживаем каждую бутылку Tajikistan',
+            start_date=date(2026, 6, 1), end_date=date(2026, 8, 31),
+            target_bottles=100000, is_active=True,
+        )
+        Campaign.objects.create(
+            name='День Земли 2026',
+            description='Сдай 3 бутылки за день и получи х3 очки',
+            start_date=date(2026, 4, 22), end_date=date(2026, 4, 22),
+            target_bottles=5000, is_active=False,
         )
 
-        self.stdout.write(self.style.SUCCESS('✅ Seed complete!'))
-        self.stdout.write(f"  Admin: phone=admin / password=Botlback2026!")
-        self.stdout.write(f"  Demo user: phone=+992900000001 / OTP=1234")
-        self.stdout.write(f"  Demo QRs: BTL-DEMO-0001, BTL-DEMO-0002, RP-DEMO-001")
-        self.stdout.write(f"  Total scans: {Scan.objects.count()}")
-        self.stdout.write(f"  Total bottles: {Bottle.objects.count()}")
-        self.stdout.write(f"  Total users: {User.objects.count()}")
+        self.stdout.write(self.style.SUCCESS('\n✅  Seed complete!'))
+        self.stdout.write('=' * 55)
+        self.stdout.write('  ADMIN LOGIN')
+        self.stdout.write('    phone=admin  password=Botlback2026!')
+        self.stdout.write('')
+        self.stdout.write('  TEST ACCOUNTS  (OTP = 1234 for all)')
+        for phone, name, region, tier in TEST_ACCOUNTS:
+            u = User.objects.get(phone=phone)
+            self.stdout.write(f'    {phone}  {name:<22} {tier:<10} {u.total_points} pts')
+        self.stdout.write('')
+        self.stdout.write('  DEMO QR CODES')
+        self.stdout.write('    BTL-DEMO-0001 … BTL-DEMO-0005 (purchase)')
+        self.stdout.write('    RP-DEMO-001                   (recycle point)')
+        self.stdout.write('=' * 55)
+        self.stdout.write(f'  Users:    {User.objects.count()}')
+        self.stdout.write(f'  Bottles:  {Bottle.objects.count()}')
+        self.stdout.write(f'  Scans:    {Scan.objects.count()}')
+        self.stdout.write(f'  Rec.pts:  {RecyclingPoint.objects.count()}')

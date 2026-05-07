@@ -154,7 +154,7 @@ export default function MapPage() {
         {/* Locate button */}
         <button
           onClick={handleGeolocate}
-          className="absolute bottom-28 right-4 z-[1000] w-12 h-12 bg-brand-dark rounded-2xl flex items-center justify-center shadow-xl border border-white/10 hover:bg-white/10 transition-all"
+          className="absolute bottom-28 lg:bottom-8 right-4 z-[1000] w-12 h-12 bg-brand-dark rounded-2xl flex items-center justify-center shadow-xl border border-white/10 hover:bg-white/10 transition-all"
         >
           <Navigation size={20} className="text-white" />
         </button>
@@ -162,7 +162,7 @@ export default function MapPage() {
         {/* List button */}
         <button
           onClick={() => setPanelOpen(true)}
-          className="absolute bottom-28 left-4 z-[1000] flex items-center gap-2 bg-brand-dark rounded-2xl px-4 py-3 shadow-xl border border-white/10 hover:bg-white/10 transition-all"
+          className="absolute bottom-28 lg:bottom-8 left-4 z-[1000] flex items-center gap-2 bg-brand-dark rounded-2xl px-4 py-3 shadow-xl border border-white/10 hover:bg-white/10 transition-all"
         >
           <ChevronUp size={16} className="text-white/60" />
           <span className="text-white text-xs font-bold">Список точек</span>
