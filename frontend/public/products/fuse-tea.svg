@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 280" fill="none">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7a5c00"/>
+      <stop offset="35%" stop-color="#c89010"/>
+      <stop offset="65%" stop-color="#e8aa20"/>
+      <stop offset="100%" stop-color="#6a4c00"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2a1800"/>
+      <stop offset="50%" stop-color="#4a3010"/>
+      <stop offset="100%" stop-color="#1a0800"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="white" stop-opacity="0"/>
+      <stop offset="40%" stop-color="white" stop-opacity="0.2"/>
+      <stop offset="60%" stop-color="white" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="3" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="44" y="18" width="32" height="8" rx="4" fill="#2a1800"/>
+    <path d="M44 26 Q30 50 26 70 L26 200 Q26 215 40 220 L80 220 Q94 215 94 200 L94 70 Q90 50 76 26 Z" fill="url(#body)"/>
+    <path d="M26 200 Q26 235 40 242 L80 242 Q94 235 94 200 Z" fill="url(#body)"/>
+    <ellipse cx="60" cy="242" rx="21" ry="6" fill="#5a4000" opacity="0.8"/>
+  </g>
+
+  <rect x="44" y="10" width="32" height="18" rx="5" fill="url(#cap)"/>
+  <rect x="46" y="10" width="28" height="4" rx="2" fill="#6a5020"/>
+
+  <rect x="28" y="82" width="64" height="118" rx="4" fill="white" opacity="0.1"/>
+  <path d="M44 26 Q30 50 26 70 L26 200 Q26 215 40 220 L44 220 L44 26 Z" fill="url(#shine)"/>
+
+  <!-- lemon slice -->
+  <circle cx="60" cy="97" r="9" fill="#ffe040" opacity="0.75"/>
+  <line x1="60" y1="88" x2="60" y2="106" stroke="#d4b800" stroke-width="1" opacity="0.5"/>
+  <line x1="51" y1="97" x2="69" y2="97" stroke="#d4b800" stroke-width="1" opacity="0.5"/>
+  <line x1="53.5" y1="90.5" x2="66.5" y2="103.5" stroke="#d4b800" stroke-width="0.8" opacity="0.4"/>
+  <line x1="53.5" y1="103.5" x2="66.5" y2="90.5" stroke="#d4b800" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- Fuse Tea text -->
+  <text x="60" y="122" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="9" fill="white" letter-spacing="1.5">FUSE TEA</text>
+  <text x="60" y="134" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="6.5" fill="#ffe040" letter-spacing="0.8" opacity="0.85">ЛИМОН</text>
+
+  <!-- wave -->
+  <path d="M28 152 Q45 146 60 152 Q75 158 92 152" stroke="#ffe040" stroke-width="2.5" fill="none" opacity="0.4" stroke-linecap="round"/>
+
+  <text x="60" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="8" fill="white" opacity="0.5">500 mL</text>
+</svg>

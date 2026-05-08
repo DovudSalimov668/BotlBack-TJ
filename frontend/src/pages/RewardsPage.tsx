@@ -8,6 +8,7 @@ import { usePrizes, useRedeem } from '@/api/rewards'
 import { useAuthStore } from '@/store/authStore'
 import { useMe } from '@/api/auth'
 import { useTranslation as useT } from 'react-i18next'
+import { getProductImage } from '@/lib/productImages'
 
 /* ─── prize meta ─── */
 const prizeEmoji = ['💳', '💰', '💎', '🍶', '👜', '👕', '🧲', '🍵']
@@ -240,15 +241,34 @@ export default function RewardsPage() {
                   )}
 
                   <div className="relative z-10 p-5 pb-4 flex flex-col h-full">
-                    {/* 3-D elevated emoji */}
-                    <motion.div
-                      className="text-4xl mb-3"
-                      style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.35))' }}
-                      animate={!locked ? { y: [0, -4, 0] } : {}}
-                      transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
-                    >
-                      {prizeEmoji[i % prizeEmoji.length]}
-                    </motion.div>
+                    {/* product image or emoji */}
+                    {(() => {
+                      const drinkKeywords = ['bonaqua','fanta','sprite','coca-cola','fuse','coke']
+                      const hasDrink = drinkKeywords.some(k => prize.name.toLowerCase().includes(k))
+                      return hasDrink ? (
+                        <motion.div
+                          className="h-16 flex items-center justify-start mb-1"
+                          animate={!locked ? { y: [0, -3, 0] } : {}}
+                          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
+                        >
+                          <img
+                            src={getProductImage(prize.name)}
+                            alt={prize.name}
+                            className="h-full w-auto"
+                            style={{ filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.4))' }}
+                          />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          className="text-4xl mb-3"
+                          style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.35))' }}
+                          animate={!locked ? { y: [0, -4, 0] } : {}}
+                          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
+                        >
+                          {prizeEmoji[i % prizeEmoji.length]}
+                        </motion.div>
+                      )
+                    })()}
 
                     <p className="text-white font-black text-sm leading-tight mb-auto">{prize.name}</p>
 

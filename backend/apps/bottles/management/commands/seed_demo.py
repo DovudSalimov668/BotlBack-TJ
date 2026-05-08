@@ -60,13 +60,13 @@ RECYCLING_POINTS = [
 ]
 
 SKUS = [
-    ('Coca-Cola 0.5L PET', 'coca-cola', 500, 'PET'),
-    ('Coca-Cola 1.5L PET', 'coca-cola', 1500, 'PET'),
-    ('Fanta Апельсин 0.5L PET', 'fanta', 500, 'PET'),
-    ('Sprite 1L PET', 'sprite', 1000, 'PET'),
-    ('Bonaqua 0.5L PET', 'bonaqua', 500, 'PET'),
-    ('Fuse Tea Лимон 0.5L PET', 'fanta', 500, 'PET'),
-    ('Coca-Cola Zero 0.5L PET', 'coca-cola', 500, 'PET'),
+    ('Coca-Cola 0.5L PET',       'coca-cola', 500,  'PET', '/products/coca-cola.svg'),
+    ('Coca-Cola 1.5L PET',       'coca-cola', 1500, 'PET', '/products/coca-cola.svg'),
+    ('Fanta Апельсин 0.5L PET',  'fanta',     500,  'PET', '/products/fanta.svg'),
+    ('Sprite 1L PET',            'sprite',    1000, 'PET', '/products/sprite.svg'),
+    ('Bonaqua 0.5L PET',         'bonaqua',   500,  'PET', '/products/bonaqua.svg'),
+    ('Fuse Tea Лимон 0.5L PET',  'fanta',     500,  'PET', '/products/fuse-tea.svg'),
+    ('Coca-Cola Zero 0.5L PET',  'coca-cola', 500,  'PET', '/products/coca-cola-zero.svg'),
 ]
 
 PRIZES = [

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
 import { Download, Printer, Wine, Recycle, Copy, Check } from 'lucide-react'
+import { getProductImage } from '@/lib/productImages'
 
 type QREntry = {
   code: string
@@ -83,8 +84,17 @@ function QRCard({ entry, size }: { entry: QREntry; size: number }) {
       <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${accentColor}, transparent)` }} />
 
       {/* QR area */}
-      <div className="flex items-center justify-center p-6 pb-4">
-        <div className="p-3 rounded-2xl bg-white shadow-lg">
+      <div className="flex items-center justify-center gap-4 px-5 pt-5 pb-3">
+        {/* bottle image for bottle type */}
+        {isBottle && (
+          <img
+            src={getProductImage(entry.label)}
+            alt={entry.label}
+            className="h-20 w-auto flex-shrink-0"
+            style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }}
+          />
+        )}
+        <div className="p-3 rounded-2xl bg-white shadow-lg flex-shrink-0">
           <QRCodeSVG
             id={`qr-svg-${entry.code}`}
             value={entry.code}

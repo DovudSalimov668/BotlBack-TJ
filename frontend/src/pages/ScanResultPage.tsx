@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, AlertCircle, QrCode, Wallet, Leaf, Sparkles, Flame } from 'lucide-react'
 import { NumberRoll } from '@/components/NumberRoll'
 import { AchievementUnlockModal, UnlockedAchievement } from '@/components/AchievementUnlockModal'
+import { getProductImage } from '@/lib/productImages'
 
 export default function ScanResultPage() {
   const { t } = useTranslation()
@@ -93,21 +94,30 @@ export default function ScanResultPage() {
         transition={{ type: 'spring', damping: 14, stiffness: 200 }}
         className="relative z-10 w-full max-w-sm"
       >
-        {/* 3D rotating check icon */}
+        {/* Bottle image + check */}
         <motion.div
           initial={{ scale: 0, rotateY: -180 }}
           animate={{ scale: 1, rotateY: 0 }}
           transition={{ delay: 0.15, type: 'spring', damping: 12 }}
           style={{ transformStyle: 'preserve-3d', perspective: 800 }}
-          className="w-28 h-28 mx-auto mb-8"
+          className="relative w-28 h-36 mx-auto mb-6"
         >
           <motion.div
-            className="w-full h-full bg-white rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(255,255,255,0.4)]"
-            animate={{ rotateY: [0, 8, 0, -8, 0] }}
+            className="w-full h-full flex items-center justify-center"
+            animate={{ rotateY: [0, 8, 0, -8, 0], y: [0, -4, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <CheckCircle2 size={60} className={isRecycle ? 'text-brand-eco' : 'text-brand-red'} strokeWidth={1.5} />
+            <img
+              src={getProductImage(result?.sku)}
+              alt={result?.sku ?? 'bottle'}
+              className="h-36 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+              style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.2))' }}
+            />
           </motion.div>
+          {/* check badge */}
+          <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${isRecycle ? 'bg-brand-eco' : 'bg-white'}`}>
+            <CheckCircle2 size={24} className={isRecycle ? 'text-white' : 'text-brand-red'} strokeWidth={2} />
+          </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
