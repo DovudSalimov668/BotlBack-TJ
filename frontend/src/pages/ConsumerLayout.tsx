@@ -93,11 +93,11 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
 function MobileBottomNav({ pathname }: { pathname: string }) {
   const { t } = useTranslation()
   return (
-    <nav className="lg:hidden fixed bottom-4 left-4 right-4 z-50">
-      <div className="flex items-center justify-around max-w-lg mx-auto rounded-[2rem] px-2 py-2
+    <nav className="lg:hidden fixed left-2 right-2 z-50 bottom-safe-4">
+      <div className="flex items-center justify-around max-w-lg mx-auto rounded-[2rem] px-1 py-1.5
                       shadow-[0_8px_40px_rgba(0,0,0,0.18)]"
         style={{
-          background: 'rgba(14,14,14,0.88)',
+          background: 'rgba(14,14,14,0.92)',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
           border: '1px solid rgba(255,255,255,0.08)',
@@ -106,11 +106,11 @@ function MobileBottomNav({ pathname }: { pathname: string }) {
           const active = pathname === path || (path !== '/' && pathname.startsWith(path))
           return (
             <Link key={path} to={path}
-              className="relative flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-2xl transition-all">
+              className="relative flex flex-col items-center gap-0.5 py-1.5 flex-1 rounded-2xl transition-all min-w-0">
               {active && <span className="absolute inset-0 bg-brand-red rounded-2xl" style={{ zIndex: -1 }} />}
-              <Icon size={21} strokeWidth={active ? 2.5 : 1.8}
-                className={cn('transition-colors', active ? 'text-white' : 'text-white/40')} />
-              <span className={cn('text-[10px] font-semibold transition-colors', active ? 'text-white' : 'text-white/30')}>
+              <Icon size={19} strokeWidth={active ? 2.5 : 1.8}
+                className={cn('transition-colors flex-shrink-0', active ? 'text-white' : 'text-white/40')} />
+              <span className={cn('text-[9px] font-semibold transition-colors truncate w-full text-center leading-none', active ? 'text-white' : 'text-white/30')}>
                 {t(key)}
               </span>
             </Link>
@@ -177,7 +177,7 @@ export default function ConsumerLayout() {
         )}
 
         {/* Page content */}
-        <main className={cn('flex-1', !isFullscreen && 'pb-24 lg:pb-8')}>
+        <main className={cn('flex-1', !isFullscreen && 'pb-nav lg:pb-8')}>
           <AnimatePresence mode="wait">
             <motion.div
               key={pathname}

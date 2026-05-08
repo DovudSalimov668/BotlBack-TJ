@@ -31,6 +31,8 @@ function FlyToPoint({ lat, lng }: { lat: number; lng: number }) {
   return null
 }
 
+const aboveNavBottom = { bottom: 'calc(6rem + max(0px, env(safe-area-inset-bottom)))' } as const
+
 export default function MapPage() {
   const { t } = useTranslation()
   const { data: points, isLoading } = useRecyclingPoints()
@@ -154,7 +156,8 @@ export default function MapPage() {
         {/* Locate button */}
         <button
           onClick={handleGeolocate}
-          className="absolute bottom-28 lg:bottom-8 right-4 z-[1000] w-12 h-12 bg-brand-dark rounded-2xl flex items-center justify-center shadow-xl border border-white/10 hover:bg-white/10 transition-all"
+          className="absolute right-4 z-[1000] w-12 h-12 bg-brand-dark rounded-2xl flex items-center justify-center shadow-xl border border-white/10 hover:bg-white/10 transition-all lg:bottom-8"
+          style={aboveNavBottom}
         >
           <Navigation size={20} className="text-white" />
         </button>
@@ -162,7 +165,8 @@ export default function MapPage() {
         {/* List button */}
         <button
           onClick={() => setPanelOpen(true)}
-          className="absolute bottom-28 lg:bottom-8 left-4 z-[1000] flex items-center gap-2 bg-brand-dark rounded-2xl px-4 py-3 shadow-xl border border-white/10 hover:bg-white/10 transition-all"
+          className="absolute left-4 z-[1000] flex items-center gap-2 bg-brand-dark rounded-2xl px-4 py-3 shadow-xl border border-white/10 hover:bg-white/10 transition-all lg:bottom-8"
+          style={aboveNavBottom}
         >
           <ChevronUp size={16} className="text-white/60" />
           <span className="text-white text-xs font-bold">Список точек</span>
@@ -176,7 +180,8 @@ export default function MapPage() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 80, opacity: 0 }}
               transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-              className="absolute bottom-20 left-4 right-4 z-[1000]"
+              className="absolute left-4 right-4 z-[1000] lg:bottom-20"
+              style={{ bottom: 'calc(4.5rem + max(0px, env(safe-area-inset-bottom)))' } /* slightly lower than buttons */}
             >
               <div
                 className="rounded-3xl p-4 shadow-2xl"
@@ -276,7 +281,7 @@ export default function MapPage() {
                 ))}
               </div>
 
-              <div className="overflow-y-auto flex-1 pb-8 border-t border-white/8">
+              <div className="overflow-y-auto flex-1 border-t border-white/8 pb-safe">
                 {filteredPoints.length === 0 && (
                   <div className="py-12 text-center">
                     <Search size={28} className="text-white/20 mx-auto mb-2" />

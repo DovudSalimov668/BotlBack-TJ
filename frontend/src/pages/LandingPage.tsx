@@ -7,12 +7,14 @@ import { useAuthStore } from '@/store/authStore'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
 import { NumberRoll } from '@/components/NumberRoll'
+import { CocaColaShowcase } from '@/components/CocaColaShowcase'
 
 const stats = [
   { num: 80,  suffix: 'M',  label: 'бутылок/год' },
   { num: 8,   suffix: 'K+', label: 'точек продаж' },
   { num: 20,  suffix: '',   label: 'pts за возврат' },
 ]
+
 
 const steps = [
   { icon: QrCode,   num: '01', title: 'Купи',    sub: 'Сканируй QR при покупке', color: '#F40009' },
@@ -35,56 +37,6 @@ const marqueeItems = [
   'Powered by Coca-Cola İçecek',
   'Hackathon Edition 2026',
 ]
-
-/* ─── Floating 3D bottle ─── */
-function FloatingBottle({ scale = 1 }: { scale?: number }) {
-  const w = Math.round(180 * scale)
-  const h = Math.round(280 * scale)
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="relative"
-    >
-      <motion.div
-        animate={{ y: [0, -14, 0], rotate: [2, -2, 2] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ filter: 'drop-shadow(0 40px 80px rgba(244,0,9,0.5))' }}
-      >
-        <svg width={w} height={h} viewBox="0 0 180 280" fill="none">
-          <defs>
-            <linearGradient id="bG" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stopColor="#FF1A24" />
-              <stop offset="50%"  stopColor="#F40009" />
-              <stop offset="100%" stopColor="#A30007" />
-            </linearGradient>
-            <linearGradient id="cG" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"  stopColor="#FFF" />
-              <stop offset="100%" stopColor="#D0D0D0" />
-            </linearGradient>
-          </defs>
-          <rect x="68" y="10" width="44" height="22" rx="3" fill="url(#cG)" />
-          <path d="M75 32 H105 L102 60 H78 Z" fill="#F40009" />
-          <path d="M58 60 Q90 50 122 60 L130 240 Q90 260 50 240 Z" fill="url(#bG)" />
-          <path d="M72 80 Q70 160 78 230" stroke="rgba(255,255,255,0.45)" strokeWidth="3" strokeLinecap="round" fill="none" />
-          <rect x="55" y="120" width="70" height="60" rx="3" fill="white" opacity="0.97" />
-          <text x="90" y="148" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="900" fontSize="13" fill="#F40009" letterSpacing="-0.5">Coca-Cola</text>
-          <text x="90" y="165" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="700" fontSize="9" fill="#666">RECYCLE</text>
-          <g transform="translate(78,188)">
-            {Array.from({ length: 16 }).map((_, i) => (
-              <rect key={i} x={(i % 4) * 6} y={Math.floor(i / 4) * 6} width="4" height="4"
-                fill={i % 3 === 0 ? '#0A0A0A' : '#F40009'} />
-            ))}
-          </g>
-        </svg>
-      </motion.div>
-      {/* glow orb */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-32 h-8 rounded-full blur-xl opacity-50"
-        style={{ background: 'rgba(244,0,9,0.6)' }} />
-    </motion.div>
-  )
-}
 
 export default function LandingPage() {
   const { t } = useTranslation()
@@ -155,7 +107,7 @@ export default function LandingPage() {
                 Hackathon Edition · Душанбе 2026
               </motion.div>
 
-              <h2 className="display text-white text-[clamp(52px,8vw,88px)] mb-4 leading-[0.88]">
+              <h2 className="display text-white text-[clamp(40px,8vw,88px)] mb-4 leading-[0.88]">
                 <motion.span className="block" initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
                   Bottle.
                 </motion.span>
@@ -215,18 +167,18 @@ export default function LandingPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.3 }}
             >
-              {/* Orbital ring */}
-              <motion.div className="absolute w-[360px] h-[360px] rounded-full border border-white/10"
-                animate={{ rotate: 360 }} transition={{ duration: 24, repeat: Infinity, ease: 'linear' }} />
-              <motion.div className="absolute w-[240px] h-[240px] rounded-full border border-white/6"
-                animate={{ rotate: -360 }} transition={{ duration: 16, repeat: Infinity, ease: 'linear' }} />
-              <FloatingBottle scale={1.6} />
+              <CocaColaShowcase size={300} rings />
             </motion.div>
 
-            {/* Mobile: overlay bottle */}
-            <div className="lg:hidden absolute right-0 top-[12%] z-0 opacity-60 pointer-events-none">
-              <FloatingBottle scale={0.85} />
-            </div>
+            {/* Mobile: bottle below hero copy, centred */}
+            <motion.div
+              className="lg:hidden flex justify-center mt-8 pointer-events-none"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.5 }}
+            >
+              <CocaColaShowcase size={160} rings={false} />
+            </motion.div>
           </div>
         </motion.div>
 

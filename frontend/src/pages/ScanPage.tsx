@@ -26,6 +26,11 @@ export default function ScanPage() {
   const [manualMode, setManualMode] = useState(false)
   const [manualCode, setManualCode] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const [scanSize, setScanSize] = useState(256)
+
+  useEffect(() => {
+    setScanSize(Math.min(256, window.innerWidth - 80))
+  }, [])
 
   const submitCode = async (code: string) => {
     const trimmed = code.trim().toUpperCase()
@@ -58,9 +63,10 @@ export default function ScanPage() {
 
   useEffect(() => {
     if (manualMode) return
+    const box = Math.max(180, scanSize - 32)
     scannerRef.current = new Html5QrcodeScanner(
       'qr-reader',
-      { fps: 10, qrbox: { width: 240, height: 240 }, aspectRatio: 1.0 },
+      { fps: 10, qrbox: { width: box, height: box }, aspectRatio: 1.0 },
       false,
     )
     scannerRef.current.render(
@@ -68,7 +74,7 @@ export default function ScanPage() {
       () => {},
     )
     return () => { scannerRef.current?.clear().catch(() => {}) }
-  }, [manualMode])
+  }, [manualMode, scanSize])
 
   /* Corner bracket */
   const Corner = ({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) => {
@@ -211,7 +217,7 @@ export default function ScanPage() {
           <div
             id="qr-reader"
             className="rounded-3xl overflow-hidden"
-            style={{ width: 288, height: 288 }}
+            style={{ width: scanSize, height: scanSize }}
           />
 
           {/* Detected flash overlay */}

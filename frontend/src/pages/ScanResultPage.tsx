@@ -127,7 +127,7 @@ export default function ScanResultPage() {
               {isRecycle ? 'Переработано' : 'Куплено'}
             </p>
           </div>
-          <h2 className="display text-white text-5xl mb-1">Отлично!</h2>
+          <h2 className="display text-white text-4xl sm:text-5xl mb-1">Отлично!</h2>
           {result?.sku && <p className="text-white/45 text-sm mt-3 mb-8 font-medium">{result.sku}</p>}
         </motion.div>
 
@@ -156,12 +156,10 @@ export default function ScanResultPage() {
             className="relative"
           >
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-white/80 text-5xl font-black">+</span>
-              <NumberRoll
-                value={result?.points ?? 0}
-                duration={1.4}
-                className="text-[112px] font-black text-white tracking-tighter leading-[0.85]"
-              />
+              <span className="text-white/80 font-black" style={{ fontSize: 'clamp(2.5rem,10vw,5rem)' }}>+</span>
+              <span style={{ fontSize: 'clamp(3.5rem,18vw,7rem)', lineHeight: 0.85 }}>
+                <NumberRoll value={result?.points ?? 0} duration={1.4} className="font-black text-white tracking-tighter" />
+              </span>
             </div>
             <p className="text-white/60 text-base font-bold mt-2 tracking-wide">
               {isRecycle ? t('scan.recycle_bonus') : t('scan.purchase_bonus')}

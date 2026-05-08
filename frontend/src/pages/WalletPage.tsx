@@ -128,13 +128,11 @@ export default function WalletPage() {
           )}
 
           {/* Massive rolling counter */}
-          <div className="flex items-end gap-3 mb-1">
-            <NumberRoll
-              value={points}
-              duration={1.6}
-              className="text-[88px] font-black text-white tracking-tighter leading-[0.85]"
-            />
-            <span className="text-white/45 text-xl font-medium mb-3">pts</span>
+          <div className="flex items-end gap-2 mb-1">
+            <span style={{ fontSize: 'clamp(3rem,15vw,5.5rem)', lineHeight: 0.85 }}>
+              <NumberRoll value={points} duration={1.6} className="font-black text-white tracking-tighter" />
+            </span>
+            <span className="text-white/45 text-lg font-medium mb-2">pts</span>
           </div>
 
           {/* Tier progress bar */}
