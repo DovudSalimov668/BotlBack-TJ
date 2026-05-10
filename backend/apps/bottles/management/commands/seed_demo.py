@@ -159,8 +159,8 @@ class Command(BaseCommand):
         # ── SKUs ──
         self.stdout.write('📦  Creating SKUs...')
         sku_objs = []
-        for name, brand, vol, pkg in SKUS:
-            sku_objs.append(SKU.objects.create(name=name, brand=brand, volume_ml=vol, package_type=pkg))
+        for name, brand, vol, pkg, img in SKUS:
+            sku_objs.append(SKU.objects.create(name=name, brand=brand, volume_ml=vol, package_type=pkg, image_url=img))
 
         # ── Recycling points ──
         self.stdout.write('📍  Creating recycling points...')
