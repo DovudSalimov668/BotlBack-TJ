@@ -146,7 +146,7 @@ class Command(BaseCommand):
         Prize.objects.all().delete()
         Campaign.objects.all().delete()
         SKU.objects.all().delete()
-        User.objects.filter(is_superuser=False).delete()
+        User.objects.all().delete()
 
         # ── Admin ──
         self.stdout.write('👤  Creating admin...')
@@ -288,7 +288,8 @@ class Command(BaseCommand):
                     break
                 b = test_reserve_bottles[idx]; idx += 1
                 b.is_scanned = True
-                dt_p = day_base + timedelta(days=j * random.randint(1, 3), hours=random.randint(8, 21))
+                _d = datetime(day_base.year, day_base.month, day_base.day, tzinfo=TJ) + timedelta(days=j * random.randint(1, 3), hours=random.randint(8, 21))
+                dt_p = _d
                 if dt_p > datetime(end_date.year, end_date.month, end_date.day, 23, 59, tzinfo=TJ):
                     dt_p = random_dt_in_range(start_date, end_date)
                 user_scan_objs.append(Scan(
