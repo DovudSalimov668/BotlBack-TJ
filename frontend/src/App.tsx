@@ -20,12 +20,14 @@ const LeaderboardPage = lazy(() => import('@/pages/LeaderboardPage'))
 const MapPage = lazy(() => import('@/pages/MapPage'))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 const AchievementsPage = lazy(() => import('@/pages/AchievementsPage'))
+const ImpactPage = lazy(() => import('@/pages/ImpactPage'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/DashboardPage'))
 const GeographicPage = lazy(() => import('@/pages/admin/GeographicPage'))
 const TimeSeriesPage = lazy(() => import('@/pages/admin/TimeSeriesPage'))
 const CampaignsPage = lazy(() => import('@/pages/admin/CampaignsPage'))
 const OutletsPage = lazy(() => import('@/pages/admin/OutletsPage'))
 const QRCodesPage = lazy(() => import('@/pages/admin/QRCodesPage'))
+const ScorecardPage = lazy(() => import('@/pages/admin/ScorecardPage'))
 
 function LoadingSpinner() {
   return (
@@ -55,6 +57,7 @@ export default function App() {
               <Route path="map" element={<MapPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="achievements" element={<AchievementsPage />} />
+              <Route path="impact" element={<ImpactPage />} />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
@@ -63,6 +66,7 @@ export default function App() {
               <Route path="campaigns" element={<CampaignsPage />} />
               <Route path="outlets" element={<OutletsPage />} />
               <Route path="qrcodes" element={<QRCodesPage />} />
+              <Route path="scorecard" element={<ScorecardPage />} />
             </Route>
           </Routes>
         </Suspense>

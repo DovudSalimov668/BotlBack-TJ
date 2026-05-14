@@ -1,6 +1,6 @@
 import { Outlet, useLocation, Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { QrCode, Wallet, Gift, Trophy, MapPin, User, Recycle } from 'lucide-react'
+import { QrCode, Wallet, Gift, Leaf, MapPin, User, Recycle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
@@ -10,7 +10,7 @@ const navItems = [
   { path: '/scan',        icon: QrCode,  key: 'nav.scan'         },
   { path: '/wallet',      icon: Wallet,  key: 'nav.wallet'       },
   { path: '/rewards',     icon: Gift,    key: 'nav.rewards'      },
-  { path: '/leaderboard', icon: Trophy,  key: 'nav.leaderboard'  },
+  { path: '/impact',      icon: Leaf,    key: 'nav.impact'       },
   { path: '/map',         icon: MapPin,  key: 'nav.map'          },
 ]
 
