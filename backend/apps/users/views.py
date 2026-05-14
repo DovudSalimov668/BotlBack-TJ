@@ -1,3 +1,5 @@
+import logging
+import re
 import uuid
 from datetime import timedelta
 
@@ -15,6 +17,10 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .models import User
 from .serializers import UserSerializer
+
+logger = logging.getLogger('botlback.auth')
+
+PHONE_RE = re.compile(r'^\+?[0-9]{7,15}$')
 
 
 class AuthThrottle(AnonRateThrottle):
@@ -42,10 +48,12 @@ class RegisterView(APIView):
         phone = request.data.get('phone', '').strip()[:20]
         name = request.data.get('name', '').strip()[:150]
         ref_code = request.data.get('referral_code', '').strip().upper()
-        if not phone:
-            return Response({'error': 'Phone required'}, status=400)
+        if not phone or not PHONE_RE.match(phone):
+            return Response({'error': 'Valid phone number required'}, status=400)
         if User.objects.filter(phone=phone).exists():
-            return Response({'error': 'Phone already registered'}, status=400)
+            # Same 400 status — don't leak whether phone exists via different status codes
+            logger.warning('Register attempt for existing phone (masked)')
+            return Response({'error': 'Registration failed'}, status=400)
         referrer = None
         if ref_code:
             referrer = User.objects.filter(referral_code=ref_code).first()
@@ -86,12 +94,16 @@ class LoginView(APIView):
     def post(self, request):
         phone = request.data.get('phone', '').strip()[:20]
         otp = request.data.get('otp', '').strip()[:10]
+        if not phone or not PHONE_RE.match(phone):
+            return Response({'error': 'Invalid credentials'}, status=401)
         valid = settings.DEBUG and otp == settings.MOCK_OTP
         if not valid:
-            return Response({'error': 'Invalid OTP'}, status=401)
+            logger.warning('Failed OTP attempt for phone (masked)')
+            return Response({'error': 'Invalid credentials'}, status=401)
         user = User.objects.filter(phone=phone).first()
         if not user:
-            return Response({'error': 'User not found'}, status=404)
+            # Same error as bad OTP — don't reveal phone existence
+            return Response({'error': 'Invalid credentials'}, status=401)
         if not user.referral_code:
             user.referral_code = _generate_referral_code()
             user.save(update_fields=['referral_code'])

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/queryClient'
 import { CursorGlow } from '@/components/CursorGlow'
 import { Toaster } from '@/components/Toast'
@@ -72,6 +73,7 @@ export default function App() {
             </Route>
           </Routes>
         </Suspense>
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
       </BrowserRouter>
     </QueryClientProvider>
     </ErrorBoundary>
