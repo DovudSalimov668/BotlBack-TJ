@@ -1,10 +1,11 @@
 import { Outlet, useLocation, Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { QrCode, Wallet, Gift, Leaf, MapPin, User, Recycle } from 'lucide-react'
+import { QrCode, Wallet, Gift, Leaf, MapPin, User, Recycle, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
 import { OnboardingModal } from '@/components/OnboardingModal'
+import { CampaignBanner } from '@/components/CampaignBanner'
 
 const navItems = [
   { path: '/scan',        icon: QrCode,  key: 'nav.scan'         },
@@ -54,7 +55,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
 
       {/* Nav */}
       <nav className="flex-1 p-4 space-y-1">
-        {navItems.map(({ path, icon: Icon, key }) => {
+        {[...navItems, { path: '/leaderboard', icon: Trophy, key: 'nav.leaderboard' }].map(({ path, icon: Icon, key }) => {
           const active = pathname === path || (path !== '/' && pathname.startsWith(path))
           return (
             <Link key={path} to={path}
@@ -176,6 +177,9 @@ export default function ConsumerLayout() {
             </Link>
           </div>
         )}
+
+        {/* Campaign banner */}
+        {!isFullscreen && <CampaignBanner />}
 
         {/* Page content */}
         <main className={cn('flex-1', !isFullscreen && 'pb-nav lg:pb-8')}>

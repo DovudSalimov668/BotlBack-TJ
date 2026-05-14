@@ -5,6 +5,7 @@ import { queryClient } from '@/lib/queryClient'
 import { CursorGlow } from '@/components/CursorGlow'
 import { Toaster } from '@/components/Toast'
 import { SplashScreen } from '@/components/SplashScreen'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import '@/lib/i18n'
 import 'leaflet/dist/leaflet.css'
 
@@ -39,6 +40,7 @@ function LoadingSpinner() {
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <CursorGlow />
@@ -72,5 +74,6 @@ export default function App() {
         </Suspense>
       </BrowserRouter>
     </QueryClientProvider>
+    </ErrorBoundary>
   )
 }

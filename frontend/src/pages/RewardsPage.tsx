@@ -226,6 +226,13 @@ export default function RewardsPage() {
                   {/* shimmer */}
                   {!locked && <Shimmer />}
 
+                  {/* Low stock urgency badge */}
+                  {inStock && prize.stock_quantity > 0 && prize.stock_quantity <= 5 && (
+                    <div className="absolute top-3 left-3 z-20 bg-brand-gold text-brand-charcoal text-[9px] font-black px-2 py-0.5 rounded-full leading-tight">
+                      Осталось {prize.stock_quantity}!
+                    </div>
+                  )}
+
                   {/* lock */}
                   {locked && (
                     <div className="absolute top-3 right-3 z-20 w-6 h-6 bg-black/30 rounded-full flex items-center justify-center">

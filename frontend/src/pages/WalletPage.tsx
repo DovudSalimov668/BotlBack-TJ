@@ -303,6 +303,29 @@ export default function WalletPage() {
           </Link>
         </div>
 
+        {/* Streak danger card */}
+        {streakDays > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.28 }}
+            className="rounded-3xl overflow-hidden relative"
+            style={{ background: 'linear-gradient(135deg, #FF6B35, #F40009)' }}
+          >
+            <div className="absolute inset-0" style={{ background: 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.04\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E")' }} />
+            <Link to="/scan" className="relative flex items-center gap-4 p-5">
+              <div className="text-3xl flex-shrink-0">🔥</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-black text-sm leading-tight">Серия {streakDays} {streakDays === 1 ? 'день' : streakDays < 5 ? 'дня' : 'дней'}!</p>
+                <p className="text-white/70 text-xs mt-0.5">Отсканируй сегодня, чтобы не потерять серию</p>
+              </div>
+              <div className="bg-white/20 rounded-2xl px-3 py-2 flex-shrink-0">
+                <span className="text-white text-xs font-black">Сканировать</span>
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
         {/* Referral card */}
         <ReferralCard />
 
