@@ -10,6 +10,7 @@ from apps.scans.models import Scan
 from apps.recycling.models import RecyclingPoint
 from apps.achievements.services import check_and_unlock
 from apps.achievements.serializers import AchievementSerializer
+from apps.users.models import User
 
 
 class ScanThrottle(UserRateThrottle):
@@ -62,15 +63,17 @@ class ScanBottleView(APIView):
                 lon = None
 
         with transaction.atomic():
+            # Lock user row first (consistent lock ordering: user → bottle avoids deadlock)
+            user = User.objects.select_for_update().get(pk=request.user.pk)
             bottle = Bottle.objects.select_for_update().select_related('sku').filter(qr_code=qr_code).first()
             if not bottle:
                 return Response({'error': 'Bottle not found'}, status=404)
             if bottle.is_scanned:
                 return Response({'error': 'Already scanned', 'code': 'already_scanned'}, status=409)
-            region = request.user.region or 'dushanbe'
+            region = user.region or 'dushanbe'
             scan = Scan.objects.create(
                 bottle=bottle,
-                user=request.user,
+                user=user,
                 scan_type='purchase',
                 latitude=lat,
                 longitude=lon,
@@ -80,15 +83,15 @@ class ScanBottleView(APIView):
             )
             bottle.is_scanned = True
             bottle.save(update_fields=['is_scanned'])
+            user.bump_streak()
 
-        request.user.bump_streak()
-        unlocked = check_and_unlock(request.user)
+        unlocked = check_and_unlock(user)
         return Response({
             'scan_id': scan.id,
             'points_awarded': scan.points_awarded,
-            'total_points': request.user.total_points,
+            'total_points': user.total_points,
             'sku': bottle.sku.name,
-            'streak_days': request.user.streak_days,
+            'streak_days': user.streak_days,
             'unlocked_achievements': [AchievementSerializer(a).data for a in unlocked],
             'message': 'Бутылка отсканирована!',
         }, status=201)
@@ -103,6 +106,7 @@ class RecycleBottleView(APIView):
         rp_qr = request.data.get('recycling_point_qr', '').strip()[:50]
 
         with transaction.atomic():
+            user = User.objects.select_for_update().get(pk=request.user.pk)
             bottle = Bottle.objects.select_for_update().filter(qr_code=bottle_qr).first()
             if not bottle:
                 return Response({'error': 'Bottle not found'}, status=404)
@@ -115,7 +119,7 @@ class RecycleBottleView(APIView):
                 return Response({'error': 'Recycling point not found or inactive'}, status=404)
             scan = Scan.objects.create(
                 bottle=bottle,
-                user=request.user,
+                user=user,
                 scan_type='recycle',
                 latitude=float(rp.latitude),
                 longitude=float(rp.longitude),
@@ -125,15 +129,15 @@ class RecycleBottleView(APIView):
             )
             bottle.is_recycled = True
             bottle.save(update_fields=['is_recycled'])
+            user.bump_streak()
 
-        request.user.bump_streak()
-        unlocked = check_and_unlock(request.user)
+        unlocked = check_and_unlock(user)
         return Response({
             'scan_id': scan.id,
             'points_awarded': scan.points_awarded,
-            'total_points': request.user.total_points,
-            'co2_saved_kg': request.user.co2_saved_kg,
+            'total_points': user.total_points,
+            'co2_saved_kg': user.co2_saved_kg,
             'recycling_point': rp.name,
-            'streak_days': request.user.streak_days,
+            'streak_days': user.streak_days,
             'unlocked_achievements': [AchievementSerializer(a).data for a in unlocked],
         }, status=201)

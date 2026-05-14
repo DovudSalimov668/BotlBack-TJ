@@ -47,7 +47,7 @@ class RegisterView(APIView):
     def post(self, request):
         phone = request.data.get('phone', '').strip()[:20]
         name = request.data.get('name', '').strip()[:150]
-        ref_code = request.data.get('referral_code', '').strip().upper()
+        ref_code = request.data.get('referral_code', '').strip()[:8].upper()
         if not phone or not PHONE_RE.match(phone):
             return Response({'error': 'Valid phone number required'}, status=400)
         if User.objects.filter(phone=phone).exists():

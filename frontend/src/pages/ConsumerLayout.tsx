@@ -81,7 +81,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-xs font-bold truncate">{user.name}</p>
-              <p className="text-white/30 text-[10px]">Мой профиль</p>
+              <p className="text-white/30 text-[10px]">{t('profile.my_profile')}</p>
             </div>
             <User size={13} className="text-white/20 group-hover:text-white/50 transition-colors flex-shrink-0" />
           </Link>
@@ -126,6 +126,7 @@ function MobileBottomNav({ pathname }: { pathname: string }) {
 export default function ConsumerLayout() {
   const location = useLocation()
   const { pathname } = location
+  const { t } = useTranslation()
   const isFullscreen = pathname.startsWith('/scan')
 
   return (
@@ -173,7 +174,7 @@ export default function ConsumerLayout() {
               <div className="w-7 h-7 bg-brand-red rounded-full flex items-center justify-center">
                 <User size={13} className="text-white" />
               </div>
-              Профиль
+              {t('nav.profile')}
             </Link>
           </div>
         )}

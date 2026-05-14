@@ -47,7 +47,7 @@ export default function LoginPage() {
         <Link to="/">
           <button className="glass text-white/70 hover:text-white flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-all">
             <ArrowLeft size={16} />
-            Назад
+            {t('common.back')}
           </button>
         </Link>
       </div>
@@ -72,10 +72,10 @@ export default function LoginPage() {
         >
           <div className="mb-7">
             <h2 className="text-white text-xl font-black tracking-tight">
-              {mode === 'login' ? 'Добро пожаловать' : 'Создать аккаунт'}
+              {mode === 'login' ? t('auth.welcome') : t('auth.create_account')}
             </h2>
             <p className="text-white/50 text-sm mt-1">
-              {mode === 'login' ? 'Введите номер и код подтверждения' : 'Заполните данные для регистрации'}
+              {mode === 'login' ? t('auth.login_hint') : t('auth.register_hint')}
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export default function LoginPage() {
               {mode === 'register' && (
                 <div>
                   <label className="text-white/60 text-xs font-semibold tracking-wide uppercase block mb-2">
-                    Ваше имя
+                    {t('auth.name_label')}
                   </label>
                   <input
                     type="text"
@@ -117,7 +117,7 @@ export default function LoginPage() {
                 size="lg"
                 className="w-full bg-brand-red hover:bg-red-600 text-white font-black rounded-2xl py-6 shadow-[0_0_24px_rgba(244,0,9,0.35)] gap-2 mt-2"
               >
-                Продолжить
+                {t('auth.continue')}
                 <ArrowRight size={18} />
               </Button>
             </form>
@@ -125,7 +125,7 @@ export default function LoginPage() {
             <form onSubmit={handleOtpSubmit} className="space-y-4">
               <div>
                 <label className="text-white/60 text-xs font-semibold tracking-wide uppercase block mb-2">
-                  Код подтверждения
+                  {t('auth.otp')}
                 </label>
                 <div className="relative">
                   <Hash className="absolute left-4 top-3.5 text-white/30" size={17} />
@@ -142,7 +142,7 @@ export default function LoginPage() {
               </div>
               {(login.isError || register.isError) && (
                 <div className="bg-brand-red/20 border border-brand-red/30 rounded-xl px-4 py-3">
-                  <p className="text-red-300 text-sm text-center">Неверный код. Попробуйте ещё раз.</p>
+                  <p className="text-red-300 text-sm text-center">{t('auth.invalid_code')}</p>
                 </div>
               )}
               <Button
@@ -176,8 +176,8 @@ export default function LoginPage() {
               className="text-sm text-white/50 hover:text-white transition-colors"
             >
               {mode === 'login'
-                ? 'Нет аккаунта? '
-                : 'Уже есть аккаунт? '}
+                ? t('auth.no_account') + ' '
+                : t('auth.have_account') + ' '}
               <span className="text-brand-red font-bold">
                 {mode === 'login' ? t('auth.register') : t('auth.login')}
               </span>

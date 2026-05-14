@@ -31,7 +31,14 @@
     "otp_hint": "Демо: 1234 ворид кунед",
     "have_account": "Аккаунт доред?",
     "no_account": "Аккаунт надоред?",
-    "phone_placeholder": "+992 9XX XXX XXXX"
+    "phone_placeholder": "+992 9XX XXX XXXX",
+    "welcome": "Хуш омадед",
+    "create_account": "Аккаунт созед",
+    "login_hint": "Рақам ва рамзи тасдиқро ворид кунед",
+    "register_hint": "Маълумотро пур кунед",
+    "continue": "Идома додан",
+    "invalid_code": "Рамз нодуруст. Дубора кӯшиш кунед.",
+    "name_label": "Номи шумо"
   },
   "scan": {
     "title": "Бутилкаро скан кунед",
@@ -98,7 +105,8 @@
     "tajik": "Тоҷикӣ",
     "region": "Минтақа",
     "member_since": "Узв аз",
-    "settings": "Танзимот"
+    "settings": "Танзимот",
+    "my_profile": "Профили ман"
   },
   "regions": {
     "dushanbe": "Душанбе",

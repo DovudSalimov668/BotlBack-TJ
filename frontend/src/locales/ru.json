@@ -31,7 +31,14 @@
     "otp_hint": "Демо: введите 1234",
     "have_account": "Уже есть аккаунт?",
     "no_account": "Нет аккаунта?",
-    "phone_placeholder": "+992 9XX XXX XXXX"
+    "phone_placeholder": "+992 9XX XXX XXXX",
+    "welcome": "Добро пожаловать",
+    "create_account": "Создать аккаунт",
+    "login_hint": "Введите номер и код подтверждения",
+    "register_hint": "Заполните данные для регистрации",
+    "continue": "Продолжить",
+    "invalid_code": "Неверный код. Попробуйте ещё раз.",
+    "name_label": "Ваше имя"
   },
   "scan": {
     "title": "Сканируй бутылку",
@@ -98,7 +105,8 @@
     "tajik": "Тоҷикӣ",
     "region": "Регион",
     "member_since": "Участник с",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "my_profile": "Мой профиль"
   },
   "regions": {
     "dushanbe": "Душанбе",
