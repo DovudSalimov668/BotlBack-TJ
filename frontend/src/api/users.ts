@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/axios'
 
-export function useScanHistory() {
+export function useScanHistory(limit = 20) {
   return useQuery({
-    queryKey: ['scan-history'],
-    queryFn: () => api.get('/users/me/scans/').then((r) => r.data),
+    queryKey: ['scan-history', limit],
+    queryFn: () => api.get(`/users/me/scans/?limit=${limit}`).then((r) => r.data),
     staleTime: 30_000,
   })
 }
@@ -35,6 +35,7 @@ export function useLeaderboard(region?: string, period?: string) {
       if (period) params.set('period', period)
       return api.get(`/users/leaderboard/?${params}`).then((r) => r.data)
     },
+    staleTime: 120_000,
   })
 }
 
@@ -42,5 +43,22 @@ export function useUserStats() {
   return useQuery({
     queryKey: ['stats'],
     queryFn: () => api.get('/users/me/stats/').then((r) => r.data),
+    staleTime: 60_000,
+  })
+}
+
+export function useMyReferral() {
+  return useQuery({
+    queryKey: ['referral'],
+    queryFn: () => api.get('/users/me/referral/').then((r) => r.data),
+    staleTime: 300_000,
+  })
+}
+
+export function useWeeklyChallenges() {
+  return useQuery({
+    queryKey: ['challenges'],
+    queryFn: () => api.get('/users/me/challenges/').then((r) => r.data),
+    staleTime: 60_000,
   })
 }

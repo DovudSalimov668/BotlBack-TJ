@@ -36,6 +36,10 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='consumer')
     streak_days = models.PositiveIntegerField(default=0)
     last_scan_date = models.DateField(null=True, blank=True)
+    referral_code = models.CharField(max_length=8, unique=True, null=True, blank=True, db_index=True)
+    referred_by = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.SET_NULL, related_name='referrals'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'phone'

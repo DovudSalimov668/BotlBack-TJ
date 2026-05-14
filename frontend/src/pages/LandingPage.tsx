@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { QrCode, Recycle, Gift, ArrowRight, ScanLine, Leaf, BarChart3, Sparkles, CheckCircle2 } from 'lucide-react'
+import { QrCode, Recycle, Gift, ArrowRight, ScanLine, Leaf, BarChart3, Sparkles, CheckCircle2, Star, Users } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { MagneticButton } from '@/components/MagneticButton'
 import { Marquee } from '@/components/Marquee'
@@ -10,9 +10,15 @@ import { NumberRoll } from '@/components/NumberRoll'
 import { CocaColaShowcase } from '@/components/CocaColaShowcase'
 
 const stats = [
-  { num: 80,  suffix: 'M',  label: 'бутылок/год' },
-  { num: 8,   suffix: 'K+', label: 'точек продаж' },
-  { num: 20,  suffix: '',   label: 'pts за возврат' },
+  { num: 511,  suffix: '+', label: 'участников' },
+  { num: 30,   suffix: '',  label: 'точек приёма' },
+  { num: 20,   suffix: '',  label: 'pts за возврат' },
+]
+
+const testimonials = [
+  { name: 'Азиз К.', region: 'Душанбе', text: 'За месяц заработал 1200 очков — обменял на Alif Mobi!', rating: 5 },
+  { name: 'Лола С.', region: 'Сугд',    text: 'Очень удобно. Сдала 47 бутылок — помогаю природе и зарабатываю.', rating: 5 },
+  { name: 'Бахром М.', region: 'Хатлон', text: 'Сначала не верил, но баллы начисляются мгновенно. Рекомендую!', rating: 5 },
 ]
 
 
@@ -280,6 +286,67 @@ export default function LandingPage() {
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                 className="w-full max-w-xs border-2 border-brand-red text-brand-red font-bold py-3 px-6 rounded-2xl hover:bg-brand-red hover:text-white transition-all">
                 {t('auth.register')}
+              </motion.button>
+            </Link>
+          </motion.div>
+        )}
+
+        {/* Testimonials */}
+        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-10%' }}
+          className="mt-10 lg:mt-16">
+          <div className="flex items-center gap-3 mb-6">
+            <Users size={20} className="text-brand-red" />
+            <h3 className="display text-2xl lg:text-4xl text-brand-charcoal">Что говорят участники</h3>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {testimonials.map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, type: 'spring', damping: 18 }}
+                whileHover={{ y: -3 }}
+                className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100"
+              >
+                <div className="flex gap-0.5 mb-3">
+                  {[...Array(t.rating)].map((_, s) => (
+                    <Star key={s} size={13} className="text-brand-gold fill-brand-gold" />
+                  ))}
+                </div>
+                <p className="text-gray-700 text-sm leading-relaxed mb-4">"{t.text}"</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-brand-red rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-black">{t.name[0]}</span>
+                  </div>
+                  <div>
+                    <p className="text-gray-900 text-xs font-bold">{t.name}</p>
+                    <p className="text-gray-400 text-[10px]">{t.region}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Social proof banner */}
+        {!isAuthenticated && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="mt-8 rounded-3xl p-6 lg:p-8 text-center"
+            style={{ background: 'linear-gradient(135deg, #F40009 0%, #FF6B35 100%)' }}
+          >
+            <p className="text-white text-xs font-bold tracking-widest uppercase mb-2 opacity-80">Присоединяйся сейчас</p>
+            <h3 className="text-white font-black text-2xl lg:text-3xl mb-1">511+ человек уже участвуют</h3>
+            <p className="text-white/70 text-sm mb-6">Начни зарабатывать очки с первой бутылки Coca-Cola</p>
+            <Link to="/login">
+              <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                className="bg-white text-brand-red font-black py-3.5 px-8 rounded-2xl text-sm shadow-xl inline-flex items-center gap-2">
+                Зарегистрироваться бесплатно
+                <ArrowRight size={16} />
               </motion.button>
             </Link>
           </motion.div>

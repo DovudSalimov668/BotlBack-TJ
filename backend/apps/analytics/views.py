@@ -1,41 +1,79 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from django.core.cache import cache
 from django.db.models import Count, Sum, Q
-from django.db.models.functions import TruncDate, TruncHour
+from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from apps.scans.models import Scan
 from apps.users.models import User
 from apps.recycling.models import RecyclingPoint
-from apps.bottles.models import SKU, Bottle
+from apps.bottles.models import SKU
 from .models import Campaign
+
+REGIONS = ['dushanbe', 'sughd', 'khatlon', 'gbao', 'rrs']
 
 
 class OverviewView(APIView):
     permission_classes = [IsAdminUser]
+
     def get(self, request):
+        cached = cache.get('analytics:overview')
+        if cached:
+            return Response(cached)
+
         today = timezone.now().date()
         yesterday = today - timedelta(days=1)
-        scans_today = Scan.objects.filter(created_at__date=today)
-        scans_yesterday = Scan.objects.filter(created_at__date=yesterday)
-        total_today = scans_today.count()
-        recycled_today = scans_today.filter(scan_type='recycle').count()
-        purchased_today = scans_today.filter(scan_type='purchase').count()
-        total_yesterday = scans_yesterday.count()
-        recycled_yesterday = scans_yesterday.filter(scan_type='recycle').count()
+
+        agg = (
+            Scan.objects
+            .filter(created_at__date__in=[today, yesterday])
+            .values('created_at__date', 'scan_type')
+            .annotate(cnt=Count('id'))
+        )
+        users_today = (
+            Scan.objects
+            .filter(created_at__date=today)
+            .aggregate(users=Count('user', distinct=True))['users']
+        )
+
+        counts = {}
+        for row in agg:
+            d = str(row['created_at__date'])
+            t = row['scan_type']
+            counts.setdefault(d, {})[t] = row['cnt']
+
+        t_key = str(today)
+        y_key = str(yesterday)
+        purchased_today = counts.get(t_key, {}).get('purchase', 0)
+        recycled_today = counts.get(t_key, {}).get('recycle', 0)
+        purchased_yesterday = counts.get(y_key, {}).get('purchase', 0)
+        recycled_yesterday = counts.get(y_key, {}).get('recycle', 0)
+        total_today = purchased_today + recycled_today
+        total_yesterday = purchased_yesterday + recycled_yesterday
+
         recycling_rate = round(recycled_today / purchased_today * 100, 1) if purchased_today else 0
-        recycling_rate_yesterday = round(recycled_yesterday / (scans_yesterday.filter(scan_type='purchase').count() or 1) * 100, 1)
-        users_today = scans_today.values('user').distinct().count()
+        recycling_rate_yesterday = round(recycled_yesterday / purchased_yesterday * 100, 1) if purchased_yesterday else 0
         co2_today = round(recycled_today * 0.082, 2)
-        top_region = scans_today.values('region').annotate(cnt=Count('id')).order_by('-cnt').first()
-        recent_scans = Scan.objects.filter(
-            scan_type='recycle', user__isnull=False
-        ).select_related('user', 'bottle__sku').order_by('-created_at')[:10]
+
+        top_region_row = (
+            Scan.objects
+            .filter(created_at__date=today)
+            .values('region')
+            .annotate(cnt=Count('id'))
+            .order_by('-cnt')
+            .first()
+        )
+
+        recent_all = (
+            Scan.objects
+            .filter(user__isnull=False)
+            .select_related('user', 'bottle__sku')
+            .order_by('-created_at')[:12]
+        )
         feed = []
-        recent_all = Scan.objects.filter(
-            user__isnull=False
-        ).select_related('user', 'bottle__sku').order_by('-created_at')[:12]
         for s in recent_all:
             name = s.user.name or s.user.phone
             parts = name.split()
@@ -44,115 +82,179 @@ class OverviewView(APIView):
             if s.scan_type == 'recycle':
                 text = f"{anon} сдал(а) {sku_name} на переработку (+20 pts)"
             else:
-                text = f"{anon} купил(а) {sku_name} (+10 pt)"
+                text = f"{anon} купил(а) {sku_name} (+10 pts)"
             feed.append({
                 'text': text,
                 'region': s.region or 'dushanbe',
                 'type': s.scan_type,
                 'time': s.created_at.isoformat(),
             })
-        return Response({
+
+        result = {
             'bottles_today': total_today,
             'bottles_yesterday': total_yesterday,
             'active_users': users_today,
             'recycling_rate': recycling_rate,
             'recycling_rate_yesterday': recycling_rate_yesterday,
             'co2_saved_kg': co2_today,
-            'top_region': top_region['region'] if top_region else 'dushanbe',
+            'top_region': top_region_row['region'] if top_region_row else 'dushanbe',
             'live_feed': feed,
-        })
+        }
+        cache.set('analytics:overview', result, 60)
+        return Response(result)
 
 
 class TimeSeriesView(APIView):
     permission_classes = [IsAdminUser]
+
     def get(self, request):
         metric = request.query_params.get('metric', 'scans')
         period = request.query_params.get('period', '30d')
         days = {'7d': 7, '30d': 30, '90d': 90}.get(period, 30)
+        cache_key = f'analytics:timeseries:{metric}:{period}'
+        cached = cache.get(cache_key)
+        if cached:
+            return Response(cached)
+
         since = timezone.now() - timedelta(days=days)
         qs = Scan.objects.filter(created_at__gte=since)
         if metric == 'recycled':
             qs = qs.filter(scan_type='recycle')
         elif metric == 'purchased':
             qs = qs.filter(scan_type='purchase')
-        data = qs.annotate(date=TruncDate('created_at')).values('date').annotate(
-            value=Count('id')
-        ).order_by('date')
-        return Response([{'date': str(d['date']), 'value': d['value']} for d in data])
+
+        data = list(
+            qs.annotate(date=TruncDate('created_at'))
+            .values('date')
+            .annotate(value=Count('id'))
+            .order_by('date')
+            .values_list('date', 'value')
+        )
+        result = [{'date': str(d), 'value': v} for d, v in data]
+        cache.set(cache_key, result, 300)
+        return Response(result)
 
 
 class MapView(APIView):
     permission_classes = [IsAdminUser]
+
     def get(self, request):
-        points = RecyclingPoint.objects.filter(is_active=True).annotate(
-            scan_count=Count('qr_code')
-        )
-        scans_by_rp = {}
-        for s in Scan.objects.filter(scan_type='recycle', latitude__isnull=False).values('latitude', 'longitude').annotate(cnt=Count('id')):
+        cached = cache.get('analytics:map')
+        if cached:
+            return Response(cached)
+
+        scans_by_coord = {}
+        for s in (
+            Scan.objects
+            .filter(scan_type='recycle', latitude__isnull=False, longitude__isnull=False)
+            .values('latitude', 'longitude')
+            .annotate(cnt=Count('id'))
+        ):
             key = (float(s['latitude']), float(s['longitude']))
-            scans_by_rp[key] = s['cnt']
+            scans_by_coord[key] = s['cnt']
+
         result = []
-        for rp in points:
+        for rp in RecyclingPoint.objects.filter(is_active=True):
+            lat, lon = float(rp.latitude), float(rp.longitude)
             result.append({
                 'id': rp.id,
                 'name': rp.name,
-                'lat': float(rp.latitude),
-                'lon': float(rp.longitude),
+                'lat': lat,
+                'lon': lon,
                 'region': rp.region,
-                'scan_count': scans_by_rp.get((float(rp.latitude), float(rp.longitude)), 0),
+                'scan_count': scans_by_coord.get((lat, lon), 0),
                 'is_active': rp.is_active,
             })
+        cache.set('analytics:map', result, 300)
         return Response(result)
 
 
 class RegionsView(APIView):
     permission_classes = [IsAdminUser]
+
     def get(self, request):
-        regions = ['dushanbe', 'sughd', 'khatlon', 'gbao', 'rrs']
+        cached = cache.get('analytics:regions')
+        if cached:
+            return Response(cached)
+
+        scan_agg = (
+            Scan.objects
+            .filter(region__in=REGIONS)
+            .values('region', 'scan_type')
+            .annotate(cnt=Count('id'))
+        )
+        user_agg = (
+            Scan.objects
+            .filter(region__in=REGIONS)
+            .values('region')
+            .annotate(users=Count('user', distinct=True))
+        )
+
+        data = {r: {'purchased': 0, 'recycled': 0, 'users': 0} for r in REGIONS}
+        for row in scan_agg:
+            r = row['region']
+            if r in data:
+                if row['scan_type'] == 'purchase':
+                    data[r]['purchased'] = row['cnt']
+                elif row['scan_type'] == 'recycle':
+                    data[r]['recycled'] = row['cnt']
+        for row in user_agg:
+            r = row['region']
+            if r in data:
+                data[r]['users'] = row['users']
+
         result = []
-        for region in regions:
-            purchased = Scan.objects.filter(region=region, scan_type='purchase').count()
-            recycled = Scan.objects.filter(region=region, scan_type='recycle').count()
-            rate = round(recycled / purchased * 100, 1) if purchased else 0
+        for region in REGIONS:
+            d = data[region]
+            rate = round(d['recycled'] / d['purchased'] * 100, 1) if d['purchased'] else 0
             result.append({
                 'region': region,
-                'bottles_purchased': purchased,
-                'bottles_recycled': recycled,
+                'bottles_purchased': d['purchased'],
+                'bottles_recycled': d['recycled'],
                 'recycling_rate': rate,
-                'users': Scan.objects.filter(region=region).values('user').distinct().count(),
+                'users': d['users'],
             })
+        cache.set('analytics:regions', result, 120)
         return Response(result)
 
 
 class SKUsView(APIView):
     permission_classes = [IsAdminUser]
+
     def get(self, request):
+        cached = cache.get('analytics:skus')
+        if cached:
+            return Response(cached)
+
         skus = SKU.objects.annotate(
             scanned=Count('bottles', filter=Q(bottles__is_scanned=True)),
             recycled=Count('bottles', filter=Q(bottles__is_recycled=True)),
             total=Count('bottles'),
         )
-        result = []
-        for sku in skus:
-            result.append({
+        result = [
+            {
                 'id': sku.id,
                 'name': sku.name,
                 'brand': sku.brand,
+                'image_url': sku.image_url,
                 'total_bottles': sku.total,
                 'scanned': sku.scanned,
                 'recycled': sku.recycled,
                 'recycling_rate': round(sku.recycled / sku.scanned * 100, 1) if sku.scanned else 0,
-            })
+            }
+            for sku in skus
+        ]
+        cache.set('analytics:skus', result, 300)
         return Response(result)
 
 
 class CampaignsView(APIView):
     permission_classes = [IsAdminUser]
+
     def get(self, request):
         campaigns = Campaign.objects.all()
         result = []
         for c in campaigns:
-            from apps.scans.models import Scan as ScanModel
             bottles = Scan.objects.filter(
                 created_at__date__gte=c.start_date,
                 created_at__date__lte=c.end_date,
@@ -171,13 +273,12 @@ class CampaignsView(APIView):
         return Response(result)
 
     def post(self, request):
-        from .models import Campaign
         from datetime import date
         c = Campaign.objects.create(
-            name=request.data.get('name', 'New Campaign'),
-            description=request.data.get('description', ''),
+            name=str(request.data.get('name', 'New Campaign'))[:200],
+            description=str(request.data.get('description', ''))[:2000],
             start_date=request.data.get('start_date', str(date.today())),
             end_date=request.data.get('end_date', str(date.today())),
-            target_bottles=request.data.get('target_bottles', 10000),
+            target_bottles=int(request.data.get('target_bottles', 10000)),
         )
         return Response({'id': c.id, 'name': c.name}, status=201)

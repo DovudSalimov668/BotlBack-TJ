@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { NumberRoll } from '@/components/NumberRoll'
 import { StreakBadge } from '@/components/StreakBadge'
 import { AnimatedBottle } from '@/components/AnimatedBottle'
+import { ReferralCard } from '@/components/ReferralCard'
+import { WeeklyChallengeCard } from '@/components/WeeklyChallengeCard'
 import { ShareButton } from '@/components/ShareButton'
 import { PullToRefresh } from '@/components/PullToRefresh'
 import { ListItemSkeleton } from '@/components/Skeleton'
@@ -300,6 +302,12 @@ export default function WalletPage() {
             </motion.div>
           </Link>
         </div>
+
+        {/* Referral card */}
+        <ReferralCard />
+
+        {/* Weekly challenges */}
+        <WeeklyChallengeCard />
 
         {/* Activity feed */}
         <motion.div

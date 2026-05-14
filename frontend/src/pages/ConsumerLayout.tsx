@@ -4,6 +4,7 @@ import { QrCode, Wallet, Gift, Trophy, MapPin, User, Recycle } from 'lucide-reac
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
+import { OnboardingModal } from '@/components/OnboardingModal'
 
 const navItems = [
   { path: '/scan',        icon: QrCode,  key: 'nav.scan'         },
@@ -192,6 +193,8 @@ export default function ConsumerLayout() {
           </AnimatePresence>
         </main>
       </div>
+
+      <OnboardingModal />
 
       {/* Mobile bottom nav */}
       {!isFullscreen && <MobileBottomNav pathname={pathname} />}
