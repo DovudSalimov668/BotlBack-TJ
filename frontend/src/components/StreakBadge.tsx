@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Flame } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface StreakBadgeProps {
   days: number
@@ -8,8 +9,10 @@ interface StreakBadgeProps {
 }
 
 export function StreakBadge({ days, className = '', size = 'md' }: StreakBadgeProps) {
+  const { t } = useTranslation()
   const active = days > 0
   const dim = size === 'sm' ? 14 : 16
+  const dayLabel = days === 1 ? t('streak.day_one') : days < 5 ? t('streak.day_few') : t('streak.day_many')
 
   return (
     <motion.div
@@ -28,7 +31,7 @@ export function StreakBadge({ days, className = '', size = 'md' }: StreakBadgePr
         <Flame size={dim} fill={active ? '#FFB800' : 'transparent'} strokeWidth={active ? 1 : 2} />
       </motion.span>
       <span className="tabular">{days}</span>
-      <span className="opacity-70 font-semibold">{days === 1 ? 'день' : days < 5 ? 'дня' : 'дней'}</span>
+      <span className="opacity-70 font-semibold">{dayLabel}</span>
     </motion.div>
   )
 }

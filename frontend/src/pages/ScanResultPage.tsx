@@ -53,7 +53,7 @@ export default function ScanResultPage() {
             <AlertCircle size={48} className="text-orange-400" />
           </div>
           <h2 className="text-2xl font-black text-brand-charcoal mb-2">{result.error}</h2>
-          <p className="text-gray-400 text-sm mb-10">Эта бутылка уже была зарегистрирована ранее</p>
+          <p className="text-gray-400 text-sm mb-10">{t('scan.already_registered')}</p>
           <div className="flex gap-3 justify-center">
             <Link to="/scan">
               <Button className="bg-brand-red hover:bg-red-600 text-white font-black rounded-2xl px-6">
@@ -124,10 +124,10 @@ export default function ScanResultPage() {
           <div className="inline-flex items-center gap-1.5 glass px-3 py-1 rounded-full mb-3">
             <Sparkles size={11} className="text-brand-gold" />
             <p className="text-white/85 text-[10px] font-bold tracking-[0.2em] uppercase">
-              {isRecycle ? 'Переработано' : 'Куплено'}
+              {isRecycle ? t('scan.recycled_label') : t('scan.purchased_label')}
             </p>
           </div>
-          <h2 className="display text-white text-4xl sm:text-5xl mb-1">Отлично!</h2>
+          <h2 className="display text-white text-4xl sm:text-5xl mb-1">{t('scan.great')}</h2>
           {result?.sku && <p className="text-white/45 text-sm mt-3 mb-8 font-medium">{result.sku}</p>}
         </motion.div>
 
@@ -172,7 +172,7 @@ export default function ScanResultPage() {
                 transition={{ delay: 1.5 }}
                 className="mt-5 pt-5 border-t border-white/15"
               >
-                <p className="text-white/45 text-xs font-semibold tracking-widest uppercase mb-1">Итого</p>
+                <p className="text-white/45 text-xs font-semibold tracking-widest uppercase mb-1">{t('scan.total_label')}</p>
                 <p className="text-white font-black text-3xl tracking-tight flex items-baseline justify-center">
                   <NumberRoll value={result.total} duration={1.6} />
                   <span className="text-white/60 text-base ml-2 font-medium">pts</span>
@@ -209,7 +209,7 @@ export default function ScanResultPage() {
             >
               <Flame size={16} fill="#FFB800" strokeWidth={1} />
             </motion.span>
-            <span>Серия: <strong className="text-brand-gold">{result.streak_days} {result.streak_days === 1 ? 'день' : result.streak_days < 5 ? 'дня' : 'дней'}</strong> подряд!</span>
+            <span>Серия: <strong className="text-brand-gold">{result.streak_days} {result.streak_days === 1 ? t('streak.day_one') : result.streak_days < 5 ? t('streak.day_few') : t('streak.day_many')}</strong> {t('scan.streak_in_row')}</span>
           </motion.div>
         )}
 

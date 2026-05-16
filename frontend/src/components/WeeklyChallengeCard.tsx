@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Recycle, QrCode, Flame, Leaf, Users, CheckCircle2, Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useWeeklyChallenges } from '@/api/users'
 
 type Challenge = {
@@ -30,6 +31,7 @@ const TYPE_COLOR: Record<string, string> = {
 }
 
 export function WeeklyChallengeCard() {
+  const { t } = useTranslation()
   const { data: challenges, isLoading } = useWeeklyChallenges()
 
   if (isLoading) {
@@ -60,10 +62,10 @@ export function WeeklyChallengeCard() {
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">
         <div className="flex items-center gap-2">
           <Trophy size={14} className="text-brand-gold" />
-          <h3 className="font-black text-brand-charcoal text-sm">Задания</h3>
+          <h3 className="font-black text-brand-charcoal text-sm">{t('challenges.title')}</h3>
         </div>
         <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">
-          {completed}/{list.length} выполнено
+          {completed}/{list.length} {t('challenges.completed')}
         </span>
       </div>
 

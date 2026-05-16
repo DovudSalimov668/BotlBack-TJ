@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Phone, Hash, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLogin, useRegister } from '@/api/auth'
+import { logger } from '@/lib/logger'
 
 export default function LoginPage() {
   const { t } = useTranslation()
@@ -33,7 +34,7 @@ export default function LoginPage() {
       }
       navigate('/wallet')
     } catch (err: unknown) {
-      console.error(err)
+      logger.error('Auth failed', err)
     }
   }
 
@@ -172,7 +173,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-5 border-t border-white/10 text-center">
             <button
-              onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setStep('phone') }}
+              onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setStep('phone'); setOtp('') }}
               className="text-sm text-white/50 hover:text-white transition-colors"
             >
               {mode === 'login'

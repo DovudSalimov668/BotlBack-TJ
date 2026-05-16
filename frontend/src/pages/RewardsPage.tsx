@@ -7,8 +7,8 @@ import { FlipCard3D } from '@/components/FlipCard3D'
 import { usePrizes, useRedeem } from '@/api/rewards'
 import { useAuthStore } from '@/store/authStore'
 import { useMe } from '@/api/auth'
-import { useTranslation as useT } from 'react-i18next'
 import { getProductImage } from '@/lib/productImages'
+import { ErrorMessage } from '@/components/ErrorMessage'
 
 /* ─── prize meta ─── */
 const prizeEmoji = ['💳', '💰', '💎', '🍶', '👜', '👕', '🧲', '🍵']
@@ -130,7 +130,7 @@ export default function RewardsPage() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const { data: me } = useMe()
-  const { data: prizes, isLoading } = usePrizes()
+  const { data: prizes, isLoading, isError } = usePrizes()
   const redeem = useRedeem()
 
   const [flipped, setFlipped]   = useState<number | null>(null)
@@ -201,7 +201,9 @@ export default function RewardsPage() {
 
       {/* ── Prize grid ── */}
       <div className="px-4 lg:px-8 py-6 lg:max-w-6xl lg:mx-auto">
-        {isLoading ? (
+        {isError ? (
+          <ErrorMessage />
+        ) : isLoading ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-52 bg-gray-200 rounded-3xl animate-pulse" />

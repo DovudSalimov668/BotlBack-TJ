@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Share2, Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from './Toast'
 
 interface ShareButtonProps {
@@ -12,6 +13,7 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ title, text, url, className = '', size = 16 }: ShareButtonProps) {
+  const { t } = useTranslation()
   const [shared, setShared] = useState(false)
 
   const handleShare = async () => {
@@ -20,17 +22,16 @@ export function ShareButton({ title, text, url, className = '', size = 16 }: Sha
       if (navigator.share) {
         await navigator.share({ title, text, url: shareUrl })
         setShared(true)
-        toast.success('Поделились!')
+        toast.success(t('share.shared'))
       } else {
         await navigator.clipboard.writeText(`${text}\n${shareUrl}`)
         setShared(true)
-        toast.success('Скопировано в буфер')
+        toast.success(t('share.copied'))
       }
       setTimeout(() => setShared(false), 2000)
     } catch (err) {
-      // User cancelled — silent
       const e = err as { name?: string }
-      if (e?.name !== 'AbortError') toast.error('Не удалось поделиться')
+      if (e?.name !== 'AbortError') toast.error(t('share.error'))
     }
   }
 

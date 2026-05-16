@@ -2,37 +2,22 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QrCode, Recycle, Gift, X, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
-const STEPS = [
-  {
-    icon: QrCode,
-    color: '#F40009',
-    bg: 'rgba(244,0,9,0.12)',
-    title: 'Купи и сканируй',
-    body: 'Покупай бутылки Coca-Cola и сканируй QR-код на этикетке. Получай +10 очков за каждую бутылку.',
-    cta: null,
-  },
-  {
-    icon: Recycle,
-    color: '#00A651',
-    bg: 'rgba(0,166,81,0.12)',
-    title: 'Сдай на переработку',
-    body: 'Найди пункт приёма на карте, сканируй QR-код точки и получай +20 очков. Спасай планету!',
-    cta: null,
-  },
-  {
-    icon: Gift,
-    color: '#6C63FF',
-    bg: 'rgba(108,99,255,0.12)',
-    title: 'Получай призы',
-    body: 'Обменивай очки на пополнение Alif Mobi, мерч Coca-Cola и эксклюзивные призы.',
-    cta: '/scan',
-  },
-]
+const STEP_ICONS = [QrCode, Recycle, Gift]
+const STEP_COLORS = ['#F40009', '#00A651', '#6C63FF']
+const STEP_BGS = ['rgba(244,0,9,0.12)', 'rgba(0,166,81,0.12)', 'rgba(108,99,255,0.12)']
 
 export function OnboardingModal() {
+  const { t } = useTranslation()
   const [visible, setVisible] = useState(false)
   const [step, setStep] = useState(0)
+
+  const STEPS = [
+    { title: t('onboarding.step1_title'), body: t('onboarding.step1_body'), cta: null },
+    { title: t('onboarding.step2_title'), body: t('onboarding.step2_body'), cta: null },
+    { title: t('onboarding.step3_title'), body: t('onboarding.step3_body'), cta: '/scan' },
+  ]
 
   useEffect(() => {
     if (!localStorage.getItem('botlback_onboarded')) {
@@ -47,15 +32,14 @@ export function OnboardingModal() {
   }
 
   const next = () => {
-    if (step < STEPS.length - 1) {
-      setStep((s) => s + 1)
-    } else {
-      dismiss()
-    }
+    if (step < STEPS.length - 1) setStep((s) => s + 1)
+    else dismiss()
   }
 
   const current = STEPS[step]
-  const Icon = current.icon
+  const Icon = STEP_ICONS[step]
+  const color = STEP_COLORS[step]
+  const bg = STEP_BGS[step]
 
   return (
     <AnimatePresence>
@@ -81,7 +65,7 @@ export function OnboardingModal() {
               {STEPS.map((_, i) => (
                 <motion.div
                   key={i}
-                  animate={{ width: i === step ? 24 : 6, background: i === step ? current.color : '#E5E7EB' }}
+                  animate={{ width: i === step ? 24 : 6, background: i === step ? color : '#E5E7EB' }}
                   transition={{ duration: 0.3 }}
                   className="h-1.5 rounded-full"
                 />
@@ -100,9 +84,9 @@ export function OnboardingModal() {
               >
                 <div
                   className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6"
-                  style={{ background: current.bg }}
+                  style={{ background: bg }}
                 >
-                  <Icon size={36} style={{ color: current.color }} />
+                  <Icon size={36} style={{ color }} />
                 </div>
                 <h3 className="text-2xl font-black text-gray-900 mb-3">{current.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{current.body}</p>
@@ -121,9 +105,9 @@ export function OnboardingModal() {
                 <Link to={current.cta} onClick={dismiss} className="flex-1">
                   <button
                     className="w-full h-12 rounded-2xl font-black text-white flex items-center justify-center gap-2 shadow-lg"
-                    style={{ background: current.color }}
+                    style={{ background: color }}
                   >
-                    Начать сканировать
+                    {t('onboarding.start')}
                     <ArrowRight size={17} />
                   </button>
                 </Link>
@@ -131,9 +115,9 @@ export function OnboardingModal() {
                 <button
                   onClick={next}
                   className="flex-1 h-12 rounded-2xl font-black text-white flex items-center justify-center gap-2"
-                  style={{ background: current.color }}
+                  style={{ background: color }}
                 >
-                  {step < STEPS.length - 1 ? 'Далее' : 'Начать'}
+                  {step < STEPS.length - 1 ? t('onboarding.next') : t('onboarding.begin')}
                   <ArrowRight size={17} />
                 </button>
               )}
