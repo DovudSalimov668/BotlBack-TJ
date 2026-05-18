@@ -7,4 +7,7 @@ urlpatterns = [
     path('me/referral/', views.MyReferralView.as_view()),
     path('me/challenges/', views.WeeklyChallengesView.as_view()),
     path('leaderboard/', views.LeaderboardView.as_view()),
+    # Admin management
+    path('admin/users/', views.AdminUserListView.as_view()),
+    path('admin/users/<int:pk>/', views.AdminUserDetailView.as_view()),
 ]

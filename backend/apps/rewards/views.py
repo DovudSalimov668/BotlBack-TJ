@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import Sum
 from rest_framework import serializers
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -68,3 +68,79 @@ class RedemptionHistoryView(ListAPIView):
 
     def get_queryset(self):
         return Redemption.objects.filter(user=self.request.user).select_related('prize')
+
+
+# ── Admin management ──────────────────────────────────────────────────────────
+
+class AdminPrizeListCreateView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        prizes = Prize.objects.all().order_by('-is_active', 'points_cost')
+        return Response(PrizeSerializer(prizes, many=True).data)
+
+    def post(self, request):
+        s = PrizeSerializer(data=request.data)
+        if s.is_valid():
+            s.save()
+            return Response(s.data, status=201)
+        return Response(s.errors, status=400)
+
+
+class AdminPrizeDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+        prize = Prize.objects.filter(pk=pk).first()
+        if not prize:
+            return Response({'error': 'Not found'}, status=404)
+        s = PrizeSerializer(prize, data=request.data, partial=True)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+        return Response(s.errors, status=400)
+
+    def delete(self, request, pk):
+        prize = Prize.objects.filter(pk=pk).first()
+        if not prize:
+            return Response({'error': 'Not found'}, status=404)
+        prize.delete()
+        return Response(status=204)
+
+
+class AdminRedemptionListView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        status_filter = request.query_params.get('status', '')
+        qs = Redemption.objects.select_related('user', 'prize').order_by('-redeemed_at')
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        data = [{
+            'id': r.id,
+            'user_id': r.user.id,
+            'user_name': r.user.name or r.user.phone,
+            'user_phone': r.user.phone,
+            'prize_id': r.prize.id,
+            'prize_name': r.prize.name,
+            'points_spent': r.points_spent,
+            'status': r.status,
+            'redeemed_at': r.redeemed_at,
+        } for r in qs[:300]]
+        return Response(data)
+
+
+class AdminRedemptionDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+        r = Redemption.objects.filter(pk=pk).first()
+        if not r:
+            return Response({'error': 'Not found'}, status=404)
+        new_status = request.data.get('status')
+        if new_status not in ('pending', 'fulfilled', 'cancelled'):
+            return Response({'error': 'Invalid status'}, status=400)
+        r.status = new_status
+        r.save(update_fields=['status'])
+        return Response({'id': r.id, 'status': r.status})
+

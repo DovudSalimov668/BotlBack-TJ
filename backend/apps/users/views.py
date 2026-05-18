@@ -253,6 +253,82 @@ class MyReferralView(APIView):
         })
 
 
+class AdminUserListView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        from apps.scans.models import Scan
+        from django.db.models import Q
+        search = request.query_params.get('q', '').strip()[:50]
+        region = request.query_params.get('region', '')
+        qs = User.objects.order_by('-date_joined')
+        if search:
+            qs = qs.filter(Q(phone__icontains=search) | Q(name__icontains=search))
+        if region:
+            qs = qs.filter(region=region)
+        users = qs[:200]
+        data = []
+        for u in users:
+            data.append({
+                'id': u.id,
+                'phone': u.phone,
+                'name': u.name or '',
+                'region': u.region or '',
+                'is_staff': u.is_staff,
+                'total_points': u.total_points,
+                'bottles_recycled': u.bottles_recycled,
+                'streak_days': u.streak_days,
+                'created_at': u.date_joined.isoformat(),
+            })
+        return Response(data)
+
+
+class AdminUserDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+        from apps.scans.models import Scan
+        user = User.objects.filter(pk=pk).first()
+        if not user:
+            return Response({'error': 'Not found'}, status=404)
+        # Adjust name/region
+        if 'name' in request.data:
+            user.name = str(request.data['name'])[:150]
+        if 'region' in request.data and request.data['region'] in {'dushanbe', 'sughd', 'khatlon', 'gbao', 'rrs'}:
+            user.region = request.data['region']
+        if 'is_staff' in request.data:
+            user.is_staff = bool(request.data['is_staff'])
+        user.save(update_fields=['name', 'region', 'is_staff'])
+        # Manual point adjustment: create a scan record with points_delta
+        if 'points_delta' in request.data:
+            delta = int(request.data['points_delta'])
+            if delta != 0:
+                Scan.objects.create(
+                    bottle=None,
+                    user=user,
+                    scan_type='admin_adjustment',
+                    region=user.region or 'dushanbe',
+                    points_awarded=delta,
+                )
+        return Response({
+            'id': user.id,
+            'phone': user.phone,
+            'name': user.name,
+            'region': user.region,
+            'is_staff': user.is_staff,
+            'total_points': user.total_points,
+        })
+
+    def delete(self, request, pk):
+        user = User.objects.filter(pk=pk).first()
+        if not user:
+            return Response({'error': 'Not found'}, status=404)
+        if user.is_staff:
+            return Response({'error': 'Cannot delete staff users'}, status=403)
+        user.delete()
+        return Response(status=204)
+
+
 class WeeklyChallengesView(APIView):
     permission_classes = [IsAuthenticated]
 

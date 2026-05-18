@@ -1,17 +1,20 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, MapPin, TrendingUp, Megaphone, Store, LogOut, BarChart3, QrCode, Award } from 'lucide-react'
+import { LayoutDashboard, MapPin, TrendingUp, Megaphone, Store, LogOut, BarChart3, QrCode, Award, Users, Gift, ShoppingBag } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { path: '/admin',             icon: LayoutDashboard, label: 'Обзор',        exact: true },
-  { path: '/admin/scorecard',   icon: Award,           label: 'Пилот'              },
-  { path: '/admin/geographic',  icon: MapPin,          label: 'География'          },
-  { path: '/admin/timeseries',  icon: TrendingUp,      label: 'Динамика'           },
-  { path: '/admin/campaigns',   icon: Megaphone,       label: 'Кампании'           },
-  { path: '/admin/outlets',     icon: Store,           label: 'Точки'              },
-  { path: '/admin/qrcodes',     icon: QrCode,          label: 'QR-коды'            },
+  { path: '/admin',                icon: LayoutDashboard, label: 'Обзор',      exact: true },
+  { path: '/admin/scorecard',      icon: Award,           label: 'Пилот'                   },
+  { path: '/admin/geographic',     icon: MapPin,          label: 'География'               },
+  { path: '/admin/timeseries',     icon: TrendingUp,      label: 'Динамика'                },
+  { path: '/admin/campaigns',      icon: Megaphone,       label: 'Кампании'                },
+  { path: '/admin/outlets',        icon: Store,           label: 'Точки'                   },
+  { path: '/admin/qrcodes',        icon: QrCode,          label: 'QR-коды'                 },
+  { path: '/admin/prizes',         icon: Gift,            label: 'Призы'                   },
+  { path: '/admin/redemptions',    icon: ShoppingBag,     label: 'Обмены'                  },
+  { path: '/admin/users',          icon: Users,           label: 'Юзеры'                   },
 ]
 
 export default function AdminLayout() {

@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.response import Response
 from rest_framework import serializers
 from .models import RecyclingPoint
 
@@ -21,3 +22,41 @@ class RecyclingPointDetailView(RetrieveAPIView):
     permission_classes = [AllowAny]
     serializer_class = RecyclingPointSerializer
     queryset = RecyclingPoint.objects.all()
+
+
+# ── Admin management ──────────────────────────────────────────────────────────
+
+class AdminOutletListCreateView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        qs = RecyclingPoint.objects.all().order_by('-is_active', 'name')
+        return Response(RecyclingPointSerializer(qs, many=True).data)
+
+    def post(self, request):
+        s = RecyclingPointSerializer(data=request.data)
+        if s.is_valid():
+            s.save()
+            return Response(s.data, status=201)
+        return Response(s.errors, status=400)
+
+
+class AdminOutletDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+        point = RecyclingPoint.objects.filter(pk=pk).first()
+        if not point:
+            return Response({'error': 'Not found'}, status=404)
+        s = RecyclingPointSerializer(point, data=request.data, partial=True)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+        return Response(s.errors, status=400)
+
+    def delete(self, request, pk):
+        point = RecyclingPoint.objects.filter(pk=pk).first()
+        if not point:
+            return Response({'error': 'Not found'}, status=404)
+        point.delete()
+        return Response(status=204)

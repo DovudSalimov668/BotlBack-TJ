@@ -30,6 +30,9 @@ const CampaignsPage = lazy(() => import('@/pages/admin/CampaignsPage'))
 const OutletsPage = lazy(() => import('@/pages/admin/OutletsPage'))
 const QRCodesPage = lazy(() => import('@/pages/admin/QRCodesPage'))
 const ScorecardPage = lazy(() => import('@/pages/admin/ScorecardPage'))
+const AdminPrizesPage = lazy(() => import('@/pages/admin/AdminPrizesPage'))
+const AdminRedemptionsPage = lazy(() => import('@/pages/admin/AdminRedemptionsPage'))
+const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function LoadingSpinner() {
@@ -72,6 +75,9 @@ export default function App() {
               <Route path="outlets" element={<OutletsPage />} />
               <Route path="qrcodes" element={<QRCodesPage />} />
               <Route path="scorecard" element={<ScorecardPage />} />
+              <Route path="prizes" element={<AdminPrizesPage />} />
+              <Route path="redemptions" element={<AdminRedemptionsPage />} />
+              <Route path="users" element={<AdminUsersPage />} />
             </Route>
           </Routes>
         </Suspense>
