@@ -111,9 +111,13 @@ class RecycleBottleView(APIView):
             if not bottle:
                 return Response({'error': 'Bottle not found'}, status=404)
             if not bottle.is_scanned:
-                return Response({'error': 'Bottle must be scanned first'}, status=400)
+                return Response({'error': 'Bottle must be scanned first', 'code': 'not_purchased'}, status=400)
             if bottle.is_recycled:
                 return Response({'error': 'Already recycled', 'code': 'already_recycled'}, status=409)
+            # Ownership: only the user who purchased this bottle may recycle it
+            purchase_scan = Scan.objects.filter(bottle=bottle, scan_type='purchase').first()
+            if not purchase_scan or purchase_scan.user_id != user.pk:
+                return Response({'error': 'You did not purchase this bottle', 'code': 'not_owner'}, status=403)
             rp = RecyclingPoint.objects.filter(qr_code=rp_qr, is_active=True).first()
             if not rp:
                 return Response({'error': 'Recycling point not found or inactive'}, status=404)

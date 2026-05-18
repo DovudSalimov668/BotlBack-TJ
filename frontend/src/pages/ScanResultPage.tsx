@@ -15,6 +15,7 @@ export default function ScanResultPage() {
   const result = state as {
     points?: number; total?: number; sku?: string; type?: string; error?: string
     streak_days?: number; unlocked_achievements?: UnlockedAchievement[]
+    co2_saved_kg?: number
   } | null
 
   const [unlockQueue, setUnlockQueue] = useState<UnlockedAchievement[]>(result?.unlocked_achievements ?? [])
@@ -191,7 +192,7 @@ export default function ScanResultPage() {
             style={{ background: 'linear-gradient(135deg, rgba(0,166,81,0.4), rgba(0,122,60,0.5))', backdropFilter: 'blur(20px)', border: '1px solid rgba(0,166,81,0.4)' }}
           >
             <Leaf size={16} className="text-brand-eco" />
-            <span>{t('scan.co2_saved')} — <strong>0.082 кг CO₂</strong></span>
+            <span>{t('scan.co2_saved')} — <strong>{(result?.co2_saved_kg ?? 0.082).toFixed(3)} кг CO₂</strong></span>
           </motion.div>
         )}
 

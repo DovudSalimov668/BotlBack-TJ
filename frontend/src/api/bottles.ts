@@ -31,3 +31,17 @@ export function useRecycleBottle() {
     },
   })
 }
+
+export interface RecyclingPointInfo {
+  qr_code: string
+  name: string
+  name_tg: string
+  address: string
+  region: string
+  latitude: number
+  longitude: number
+}
+
+export async function verifyRecyclingPoint(qrCode: string): Promise<RecyclingPointInfo> {
+  return api.get(`/recycling/points/verify/${qrCode}/`).then((r) => r.data)
+}

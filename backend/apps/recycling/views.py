@@ -24,6 +24,24 @@ class RecyclingPointDetailView(RetrieveAPIView):
     queryset = RecyclingPoint.objects.all()
 
 
+class VerifyRecyclingPointView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, qr_code):
+        rp = RecyclingPoint.objects.filter(qr_code=qr_code, is_active=True).first()
+        if not rp:
+            return Response({'error': 'Recycling point not found or inactive'}, status=404)
+        return Response({
+            'qr_code': rp.qr_code,
+            'name': rp.name,
+            'name_tg': rp.name_tg,
+            'address': rp.address,
+            'region': rp.region,
+            'latitude': float(rp.latitude),
+            'longitude': float(rp.longitude),
+        })
+
+
 # ── Admin management ──────────────────────────────────────────────────────────
 
 class AdminOutletListCreateView(APIView):

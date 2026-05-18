@@ -7,6 +7,7 @@ class Scan(models.Model):
         ('purchase', 'Purchase'),
         ('recycle', 'Recycle'),
         ('referral_bonus', 'Referral Bonus'),
+        ('admin_adjustment', 'Admin Adjustment'),
     ]
     REGION_CHOICES = [
         ('dushanbe', 'Душанбе'),
