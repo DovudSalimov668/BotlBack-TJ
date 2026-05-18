@@ -3,19 +3,22 @@ import { Leaf, Share2, TreePine, Car, Zap, Recycle, Globe, ArrowRight, Droplets 
 import { Link } from 'react-router-dom'
 import { useMe } from '@/api/auth'
 import { useAuthStore } from '@/store/authStore'
+import { useCommunityStats } from '@/api/analytics'
 import { NumberRoll } from '@/components/NumberRoll'
 
 function co2ToTrees(kg: number) { return +(kg / 21 * 12).toFixed(1) }
 function co2ToKm(kg: number) { return Math.round(kg * 4.8) }
 function co2ToPhoneCharges(kg: number) { return Math.round(kg * 122) }
 
-const COMMUNITY_RECYCLED = 2340
-const COMMUNITY_CO2 = +(COMMUNITY_RECYCLED * 0.082).toFixed(1)
-const COMMUNITY_TREES = co2ToTrees(COMMUNITY_CO2)
-
 export default function ImpactPage() {
   const { data: me } = useMe()
   const { user } = useAuthStore()
+  const { data: community } = useCommunityStats()
+
+  const COMMUNITY_RECYCLED = community?.bottles_recycled ?? 2340
+  const COMMUNITY_CO2 = community?.co2_saved_kg ?? +(COMMUNITY_RECYCLED * 0.082).toFixed(1)
+  const COMMUNITY_TREES = co2ToTrees(+COMMUNITY_CO2)
+  const COMMUNITY_USERS = community?.total_users ?? 511
   const bottles = me?.bottles_recycled ?? user?.bottles_recycled ?? 0
   const co2 = +(bottles * 0.082).toFixed(2)
   const trees = co2ToTrees(co2)
@@ -135,7 +138,7 @@ export default function ImpactPage() {
             </div>
             <div>
               <p className="font-black text-sm text-brand-charcoal">Вклад в сообщество</p>
-              <p className="text-[10px] text-gray-400">511 участников BotlBack TJ</p>
+              <p className="text-[10px] text-gray-400">{COMMUNITY_USERS} участников BotlBack TJ</p>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3 text-center">

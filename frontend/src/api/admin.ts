@@ -55,14 +55,14 @@ export interface AdminUser {
 export function useAdminPrizes() {
   return useQuery<AdminPrize[]>({
     queryKey: ['admin', 'prizes'],
-    queryFn: () => api.get('/api/rewards/admin/prizes/').then(r => r.data),
+    queryFn: () => api.get('/rewards/admin/prizes/').then(r => r.data),
   })
 }
 
 export function useCreatePrize() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<AdminPrize>) => api.post('/api/rewards/admin/prizes/', data).then(r => r.data),
+    mutationFn: (data: Partial<AdminPrize>) => api.post('/rewards/admin/prizes/', data).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'prizes'] }),
   })
 }
@@ -71,7 +71,7 @@ export function useUpdatePrize() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, ...data }: Partial<AdminPrize> & { id: number }) =>
-      api.patch(`/api/rewards/admin/prizes/${id}/`, data).then(r => r.data),
+      api.patch(`/rewards/admin/prizes/${id}/`, data).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'prizes'] }),
   })
 }
@@ -79,7 +79,7 @@ export function useUpdatePrize() {
 export function useDeletePrize() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => api.delete(`/api/rewards/admin/prizes/${id}/`),
+    mutationFn: (id: number) => api.delete(`/rewards/admin/prizes/${id}/`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'prizes'] }),
   })
 }
@@ -91,7 +91,7 @@ export function useAdminRedemptions(statusFilter?: string) {
     queryKey: ['admin', 'redemptions', statusFilter],
     queryFn: () => {
       const params = statusFilter ? `?status=${statusFilter}` : ''
-      return api.get(`/api/rewards/admin/redemptions/${params}`).then(r => r.data)
+      return api.get(`/rewards/admin/redemptions/${params}`).then(r => r.data)
     },
   })
 }
@@ -100,7 +100,7 @@ export function useUpdateRedemption() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, status }: { id: number; status: string }) =>
-      api.patch(`/api/rewards/admin/redemptions/${id}/`, { status }).then(r => r.data),
+      api.patch(`/rewards/admin/redemptions/${id}/`, { status }).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'redemptions'] }),
   })
 }
@@ -110,14 +110,14 @@ export function useUpdateRedemption() {
 export function useAdminOutlets() {
   return useQuery<AdminOutlet[]>({
     queryKey: ['admin', 'outlets'],
-    queryFn: () => api.get('/api/recycling/admin/outlets/').then(r => r.data),
+    queryFn: () => api.get('/recycling/admin/outlets/').then(r => r.data),
   })
 }
 
 export function useCreateOutlet() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<AdminOutlet>) => api.post('/api/recycling/admin/outlets/', data).then(r => r.data),
+    mutationFn: (data: Partial<AdminOutlet>) => api.post('/recycling/admin/outlets/', data).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'outlets'] }),
   })
 }
@@ -126,7 +126,7 @@ export function useUpdateOutlet() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, ...data }: Partial<AdminOutlet> & { id: number }) =>
-      api.patch(`/api/recycling/admin/outlets/${id}/`, data).then(r => r.data),
+      api.patch(`/recycling/admin/outlets/${id}/`, data).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'outlets'] }),
   })
 }
@@ -134,7 +134,7 @@ export function useUpdateOutlet() {
 export function useDeleteOutlet() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => api.delete(`/api/recycling/admin/outlets/${id}/`),
+    mutationFn: (id: number) => api.delete(`/recycling/admin/outlets/${id}/`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'outlets'] }),
   })
 }
@@ -149,7 +149,7 @@ export function useAdminUsers(search?: string, region?: string) {
       if (search) params.set('q', search)
       if (region) params.set('region', region)
       const qs = params.toString()
-      return api.get(`/api/users/admin/users/${qs ? `?${qs}` : ''}`).then(r => r.data)
+      return api.get(`/users/admin/users/${qs ? `?${qs}` : ''}`).then(r => r.data)
     },
   })
 }
@@ -158,7 +158,7 @@ export function useUpdateAdminUser() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, ...data }: { id: number; [key: string]: unknown }) =>
-      api.patch(`/api/users/admin/users/${id}/`, data).then(r => r.data),
+      api.patch(`/users/admin/users/${id}/`, data).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
   })
 }
@@ -166,7 +166,7 @@ export function useUpdateAdminUser() {
 export function useDeleteAdminUser() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => api.delete(`/api/users/admin/users/${id}/`),
+    mutationFn: (id: number) => api.delete(`/users/admin/users/${id}/`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
   })
 }

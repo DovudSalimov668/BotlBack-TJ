@@ -3,7 +3,7 @@ from django.db.models import Count, Sum, Q
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -84,6 +84,7 @@ class OverviewView(APIView):
             else:
                 text = f"{anon} купил(а) {sku_name} (+10 pts)"
             feed.append({
+                'id': s.id,
                 'text': text,
                 'region': s.region or 'dushanbe',
                 'type': s.scan_type,
@@ -102,6 +103,45 @@ class OverviewView(APIView):
         }
         cache.set('analytics:overview', result, 60)
         return Response(result)
+
+
+class LiveFeedView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        since_param = request.query_params.get('since', '')
+        qs = (
+            Scan.objects
+            .filter(user__isnull=False)
+            .select_related('user', 'bottle__sku')
+            .order_by('-created_at')
+        )
+        if since_param:
+            try:
+                from django.utils.dateparse import parse_datetime
+                since_dt = parse_datetime(since_param)
+                if since_dt:
+                    qs = qs.filter(created_at__gt=since_dt)
+            except Exception:
+                pass
+        feed = []
+        for s in qs[:20]:
+            name = s.user.name or s.user.phone
+            parts = name.split()
+            anon = f"{parts[0]} {parts[1][0]}." if len(parts) > 1 else name
+            sku_name = s.bottle.sku.name if s.bottle and s.bottle.sku else 'бутылку'
+            if s.scan_type == 'recycle':
+                text = f"{anon} сдал(а) {sku_name} на переработку (+20 pts)"
+            else:
+                text = f"{anon} купил(а) {sku_name} (+10 pts)"
+            feed.append({
+                'id': s.id,
+                'text': text,
+                'region': s.region or 'dushanbe',
+                'type': s.scan_type,
+                'time': s.created_at.isoformat(),
+            })
+        return Response(feed)
 
 
 class TimeSeriesView(APIView):
@@ -248,6 +288,28 @@ class SKUsView(APIView):
         return Response(result)
 
 
+class CommunityStatsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        cached = cache.get('analytics:community')
+        if cached:
+            return Response(cached)
+
+        total_users = User.objects.filter(is_active=True).count()
+        recycled = Scan.objects.filter(scan_type='recycle').count()
+        co2_kg = round(recycled * 0.082, 1)
+        total_scans = Scan.objects.filter(scan_type__in=['purchase', 'recycle']).count()
+        result = {
+            'total_users': total_users,
+            'bottles_recycled': recycled,
+            'total_scans': total_scans,
+            'co2_saved_kg': co2_kg,
+        }
+        cache.set('analytics:community', result, 120)
+        return Response(result)
+
+
 class CampaignsView(APIView):
     permission_classes = [IsAdminUser]
 
@@ -282,3 +344,33 @@ class CampaignsView(APIView):
             target_bottles=int(request.data.get('target_bottles', 10000)),
         )
         return Response({'id': c.id, 'name': c.name}, status=201)
+
+
+class CampaignDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+        c = Campaign.objects.filter(pk=pk).first()
+        if not c:
+            return Response({'error': 'Not found'}, status=404)
+        if 'name' in request.data:
+            c.name = str(request.data['name'])[:200]
+        if 'description' in request.data:
+            c.description = str(request.data['description'])[:2000]
+        if 'start_date' in request.data:
+            c.start_date = request.data['start_date']
+        if 'end_date' in request.data:
+            c.end_date = request.data['end_date']
+        if 'target_bottles' in request.data:
+            c.target_bottles = int(request.data['target_bottles'])
+        if 'is_active' in request.data:
+            c.is_active = bool(request.data['is_active'])
+        c.save()
+        return Response({'id': c.id, 'name': c.name, 'is_active': c.is_active})
+
+    def delete(self, request, pk):
+        c = Campaign.objects.filter(pk=pk).first()
+        if not c:
+            return Response({'error': 'Not found'}, status=404)
+        c.delete()
+        return Response(status=204)

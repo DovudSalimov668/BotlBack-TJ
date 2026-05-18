@@ -6,46 +6,10 @@ import {
   BarChart, Bar, CartesianGrid, Cell,
 } from 'recharts'
 import { NumberRoll } from '@/components/NumberRoll'
-import { useOverview, useTimeSeries, useRegions } from '@/api/analytics'
+import { useOverview, useTimeSeries, useRegions, useLiveFeed } from '@/api/analytics'
 import { useState, useEffect, useRef } from 'react'
 
-/* ─── Simulated live feed ─── */
-const NAMES = ['Aziz K.', 'Dilnoza S.', 'Jamshid R.', 'Maftuna T.', 'Bahrom N.', 'Zulfiya A.', 'Rustam D.', 'Nilufar K.', 'Davron M.', 'Barno U.']
-const REGIONS = ['Душанбе', 'Согд', 'Хатлон', 'ГБАО', 'РРС']
-const SKU_NAMES = ['Coca-Cola 0.5л', 'Sprite 1л', 'Fanta 0.5л', 'Coca-Cola 1.5л', 'Schweppes 0.33л']
-function genEvent() {
-  const isRecycle = Math.random() > 0.45
-  const name = NAMES[Math.floor(Math.random() * NAMES.length)]
-  const region = REGIONS[Math.floor(Math.random() * REGIONS.length)]
-  const sku = SKU_NAMES[Math.floor(Math.random() * SKU_NAMES.length)]
-  const pts = isRecycle ? 5 : 1
-  return {
-    id: Date.now() + Math.random(),
-    type: isRecycle ? 'recycle' : 'purchase',
-    text: isRecycle
-      ? `${name} сдал(а) ${sku} на переработку (+${pts} pts)`
-      : `${name} купил(а) ${sku} (+${pts} pt)`,
-    region,
-    ts: new Date().toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-  }
-}
-
-function useLiveFeed(initial: ReturnType<typeof genEvent>[]) {
-  const [feed, setFeed] = useState(initial)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      const delay = 1800 + Math.random() * 2400
-      setTimeout(() => {
-        setFeed((prev) => [genEvent(), ...prev.slice(0, 14)])
-      }, delay - 1800)
-    }, 2200 + Math.random() * 1600)
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [])
-
-  return feed
-}
+/* ─── Ticking live bottle counter ─── */
 
 /* ─── Ticking live bottle counter ─── */
 function useLiveCounter(base: number) {
@@ -125,13 +89,12 @@ const customTooltipStyle = {
   boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
 }
 
-const SEED_FEED = Array.from({ length: 8 }, () => genEvent())
-
 export default function AdminDashboardPage() {
   const { t } = useTranslation()
   const { data: overview } = useOverview()
   const { data: timeSeries } = useTimeSeries('scans', '30d')
   const { data: regions } = useRegions()
+  const { data: liveFeedData } = useLiveFeed()
 
   const trend = overview
     ? overview.bottles_yesterday > 0
@@ -140,7 +103,17 @@ export default function AdminDashboardPage() {
     : 0
 
   const liveBottles = useLiveCounter(overview?.bottles_today ?? 0)
-  const feed = useLiveFeed(SEED_FEED)
+
+  // Merge API live feed with seeded overview feed
+  const rawFeed: Array<{ id: number | string; type: string; text: string; region: string; time?: string; ts?: string }> =
+    liveFeedData?.length
+      ? liveFeedData
+      : (overview?.live_feed ?? [])
+
+  const feed = rawFeed.map((e) => ({
+    ...e,
+    ts: e.ts ?? (e.time ? new Date(e.time).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''),
+  }))
 
   const chartData = timeSeries?.map((d: { date: string; value: number }) => ({
     date: d.date.slice(5),

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/axios'
 
 export function useOverview() {
@@ -6,6 +6,17 @@ export function useOverview() {
     queryKey: ['analytics', 'overview'],
     queryFn: () => api.get('/analytics/overview/').then((r) => r.data),
     refetchInterval: 30_000,
+  })
+}
+
+export function useLiveFeed(since?: string) {
+  return useQuery({
+    queryKey: ['analytics', 'live', since],
+    queryFn: () => {
+      const qs = since ? `?since=${encodeURIComponent(since)}` : ''
+      return api.get(`/analytics/live/${qs}`).then(r => r.data)
+    },
+    refetchInterval: 8_000,
   })
 }
 
@@ -41,9 +52,43 @@ export function useSKUs() {
   })
 }
 
+export function useCommunityStats() {
+  return useQuery({
+    queryKey: ['analytics', 'community'],
+    queryFn: () => api.get('/analytics/community/').then(r => r.data),
+    staleTime: 2 * 60_000,
+  })
+}
+
 export function useCampaigns() {
   return useQuery({
     queryKey: ['analytics', 'campaigns'],
     queryFn: () => api.get('/analytics/campaigns/').then((r) => r.data),
+  })
+}
+
+export function useCreateCampaign() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      api.post('/analytics/campaigns/', data).then(r => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['analytics', 'campaigns'] }),
+  })
+}
+
+export function useUpdateCampaign() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: number } & Record<string, unknown>) =>
+      api.patch(`/analytics/campaigns/${id}/`, data).then(r => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['analytics', 'campaigns'] }),
+  })
+}
+
+export function useDeleteCampaign() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => api.delete(`/analytics/campaigns/${id}/`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['analytics', 'campaigns'] }),
   })
 }
