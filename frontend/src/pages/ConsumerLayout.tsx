@@ -128,17 +128,18 @@ export default function ConsumerLayout() {
   const { pathname } = location
   const { t } = useTranslation()
   const isFullscreen = pathname.startsWith('/scan')
+  const hideChrome = isFullscreen || pathname === '/map'
 
   return (
     <div className="flex min-h-screen bg-[#F4F4F4]">
-      {/* Desktop sidebar — hidden on scan pages */}
-      {!isFullscreen && <DesktopSidebar pathname={pathname} />}
+      {/* Desktop sidebar — hidden on scan/map pages */}
+      {!hideChrome && <DesktopSidebar pathname={pathname} />}
 
       {/* Main column */}
-      <div className={cn('flex-1 flex flex-col', !isFullscreen && 'lg:ml-64')}>
+      <div className={cn('flex-1 flex flex-col', !hideChrome && 'lg:ml-64')}>
 
-        {/* Mobile header — not shown on scan pages */}
-        {!isFullscreen && (
+        {/* Mobile header — not shown on scan/map pages */}
+        {!hideChrome && (
           <header className="lg:hidden sticky top-0 z-30 px-5 py-3 flex items-center justify-between"
             style={{
               background: 'rgba(255,255,255,0.88)',
@@ -160,7 +161,7 @@ export default function ConsumerLayout() {
         )}
 
         {/* Desktop top-bar — breadcrumb / page title */}
-        {!isFullscreen && (
+        {!hideChrome && (
           <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-gray-200 bg-white sticky top-0 z-30">
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <span className="font-medium">BotlBack TJ</span>
@@ -180,10 +181,10 @@ export default function ConsumerLayout() {
         )}
 
         {/* Campaign banner */}
-        {!isFullscreen && <CampaignBanner />}
+        {!hideChrome && <CampaignBanner />}
 
         {/* Page content */}
-        <main className={cn('flex-1', !isFullscreen && 'pb-nav lg:pb-8')}>
+        <main className={cn('flex-1', !hideChrome && 'pb-nav lg:pb-8')}>
           <AnimatePresence mode="wait">
             <motion.div
               key={pathname}
@@ -192,6 +193,7 @@ export default function ConsumerLayout() {
               animate="animate"
               exit="exit"
               transition={pageTransition}
+              className={cn(!hideChrome && 'max-w-4xl mx-auto w-full')}
             >
               <Outlet />
             </motion.div>

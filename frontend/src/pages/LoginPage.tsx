@@ -65,6 +65,7 @@ export default function LoginPage() {
 
       {/* Glass card */}
       <div className="flex-1 flex flex-col justify-center px-6 pb-12 relative z-10">
+        <div className="max-w-sm mx-auto w-full">
         <motion.div
           initial={{ opacity: 0, y: 24, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -185,6 +186,7 @@ export default function LoginPage() {
             </button>
           </div>
         </motion.div>
+        </div>
       </div>
     </div>
   )

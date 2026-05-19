@@ -76,7 +76,8 @@ export default function MapPage() {
   return (
     <div className="flex flex-col" style={{ height: '100dvh' }}>
       {/* ── Header ── */}
-      <div className="bg-brand-dark text-white px-5 pt-10 pb-4 flex-shrink-0 relative z-10">
+      <div className="bg-brand-dark text-white px-5 pb-4 flex-shrink-0 relative z-10"
+        style={{ paddingTop: 'max(2.5rem, env(safe-area-inset-top))' }}>
         <div className="flex items-end justify-between">
           <div>
             <p className="text-white/40 text-[10px] font-semibold tracking-widest uppercase">Переработка</p>

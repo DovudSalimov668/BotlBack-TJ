@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Html5QrcodeScanner } from 'html5-qrcode'
+import { Html5Qrcode } from 'html5-qrcode'
 import { useScanBottle, useRecycleBottle, verifyRecyclingPoint } from '@/api/bottles'
 import api from '@/lib/axios'
 import { ArrowLeft, Zap, QrCode, Keyboard, ChevronRight, MapPin, RotateCcw, Recycle } from 'lucide-react'
@@ -35,7 +35,7 @@ const DEMO_CODES = [
 export default function ScanPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null)
+  const scannerRef = useRef<Html5Qrcode | null>(null)
   const hasScannedRef = useRef(false)
   const scanMutation = useScanBottle()
   const recycleMutation = useRecycleBottle()
@@ -174,7 +174,7 @@ export default function ScanPage() {
           },
         })
       } catch (err: unknown) {
-        const e = err as { response?: { data?: { code?: string } } }
+        const e = err as { response?: { status?: number; data?: { code?: string } } }
         if (e?.response?.data?.code === 'already_scanned') {
           // Bottle was already purchased. Check if it's been recycled already.
           try {
@@ -207,16 +207,17 @@ export default function ScanPage() {
   useEffect(() => {
     if (manualMode || phase.kind === 'processing') return
     const box = Math.max(180, scanSize - 32)
-    scannerRef.current = new Html5QrcodeScanner(
-      'qr-reader',
-      { fps: 10, qrbox: { width: box, height: box }, aspectRatio: 1.0 },
-      false,
-    )
-    scannerRef.current.render(
+    const qr = new Html5Qrcode('qr-reader')
+    scannerRef.current = qr
+    qr.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: box, height: box } },
       (decodedText) => handleCode(decodedText),
       () => {},
-    )
-    return () => { scannerRef.current?.clear().catch(() => {}) }
+    ).catch(() => {})
+    return () => {
+      void qr.stop().then(() => qr.clear()).catch(() => {})
+    }
   }, [manualMode, scanSize, phase.kind, handleCode])
 
   const isProcessing = phase.kind === 'processing' || scanMutation.isPending || recycleMutation.isPending
@@ -319,7 +320,8 @@ export default function ScanPage() {
       <motion.div
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
-        className="flex items-center gap-3 px-5 pt-12 pb-4 relative z-20"
+        className="flex items-center gap-3 px-5 pb-4 relative z-20"
+        style={{ paddingTop: 'max(3rem, env(safe-area-inset-top))' }}
       >
         <button
           onClick={() => navigate(-1)}

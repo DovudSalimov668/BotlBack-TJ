@@ -225,3 +225,14 @@
 
 /* Leaflet z-index fix */
 .leaflet-container { z-index: 1; }
+
+/* html5-qrcode: force video to fill our custom container, hide injected UI chrome */
+#qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: inherit;
+}
+#qr-reader img { display: none !important; }
+#qr-reader > div:not([id*="qr-shaded"]) { display: none !important; }
+#qr-reader__scan_region { width: 100% !important; height: 100% !important; }
