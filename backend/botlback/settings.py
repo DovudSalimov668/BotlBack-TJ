@@ -65,20 +65,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'botlback.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'postgres'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'CONN_MAX_AGE': 60,
-        'OPTIONS': {
-            'connect_timeout': 10,
-        },
+if os.getenv('USE_SQLITE', 'False') == 'True':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'postgres'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+            'CONN_MAX_AGE': 60,
+            'OPTIONS': {
+                'connect_timeout': 10,
+            },
+        }
+    }
 
 CACHES = {
     'default': {
