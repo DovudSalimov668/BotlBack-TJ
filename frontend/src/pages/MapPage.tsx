@@ -251,10 +251,10 @@ export default function MapPage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Поиск по названию, адресу..."
-                    className="w-full bg-white/8 border border-white/10 rounded-2xl pl-10 pr-10 py-2.5 text-white placeholder-white/30 text-sm focus:outline-none focus:bg-white/12 focus:border-brand-red transition-all"
+                    className="w-full bg-white/8 border border-white/10 rounded-2xl pl-10 pr-10 py-2.5 text-white placeholder-white/30 text-base focus:outline-none focus:bg-white/12 focus:border-brand-red transition-all"
                   />
                   {search && (
-                    <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white">
+                    <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-white/40 hover:text-white rounded-full">
                       <X size={14} />
                     </button>
                   )}

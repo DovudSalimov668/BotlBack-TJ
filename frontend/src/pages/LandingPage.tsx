@@ -212,7 +212,7 @@ export default function LandingPage() {
       </div>
 
       {/* ══════════ HOW IT WORKS ══════════ */}
-      <div className="px-6 lg:px-16 py-12 lg:py-20 max-w-7xl mx-auto">
+      <div className="px-6 lg:px-16 pt-12 pb-28 lg:py-20 max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-15%' }} className="flex items-center gap-3 mb-8">
           <BarChart3 size={20} className="text-brand-red" />

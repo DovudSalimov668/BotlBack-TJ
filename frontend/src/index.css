@@ -234,5 +234,4 @@
   border-radius: inherit;
 }
 #qr-reader img { display: none !important; }
-#qr-reader > div:not([id*="qr-shaded"]) { display: none !important; }
-#qr-reader__scan_region { width: 100% !important; height: 100% !important; }
+#qr-reader > div { display: none !important; }

@@ -89,7 +89,8 @@ export default function AdminLayout() {
       </aside>
 
       {/* ── Mobile top bar ── */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-brand-dark border-b border-white/8">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-brand-dark border-b border-white/8"
+        style={{ paddingTop: 'max(0.5rem, env(safe-area-inset-top))' }}>
         <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto">
           <span className="text-white font-black text-sm mr-2 shrink-0">BotlBack</span>
           {navItems.map(({ path, icon: Icon, label, exact }) => {
@@ -114,7 +115,7 @@ export default function AdminLayout() {
       {/* ── Main content ── */}
       <div className="flex-1 lg:ml-60">
         <main className="min-h-screen pt-0 lg:pt-0">
-          <div className="lg:hidden h-14" />
+          <div className="lg:hidden" style={{ height: 'calc(3.5rem + env(safe-area-inset-top))' }} />
           <Outlet />
         </main>
       </div>

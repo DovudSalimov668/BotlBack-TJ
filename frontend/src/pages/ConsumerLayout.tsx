@@ -108,7 +108,7 @@ function MobileBottomNav({ pathname }: { pathname: string }) {
           const active = pathname === path || (path !== '/' && pathname.startsWith(path))
           return (
             <Link key={path} to={path}
-              className="relative flex flex-col items-center gap-0.5 py-1.5 flex-1 rounded-2xl transition-all min-w-0">
+              className="relative flex flex-col items-center gap-0.5 py-2.5 flex-1 rounded-2xl transition-all min-w-0">
               {active && <span className="absolute inset-0 bg-brand-red rounded-2xl" style={{ zIndex: -1 }} />}
               <Icon size={19} strokeWidth={active ? 2.5 : 1.8}
                 className={cn('transition-colors flex-shrink-0', active ? 'text-white' : 'text-white/40')} />

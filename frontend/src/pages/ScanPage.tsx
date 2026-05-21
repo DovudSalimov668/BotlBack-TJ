@@ -325,7 +325,7 @@ export default function ScanPage() {
       >
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-full bg-white/8 border border-white/10 flex items-center justify-center"
+          className="w-11 h-11 rounded-full bg-white/8 border border-white/10 flex items-center justify-center"
         >
           <ArrowLeft size={18} className="text-white" />
         </button>
@@ -503,7 +503,7 @@ export default function ScanPage() {
                   onChange={(e) => setManualCode(e.target.value.toUpperCase())}
                   onKeyDown={(e) => e.key === 'Enter' && handleCode(manualCode)}
                   placeholder={phase.kind === 'has_rp' ? 'BTL-DEMO-0001' : phase.kind === 'need_rp' ? 'RP-DEMO-001' : 'BTL-... или RP-...'}
-                  className="flex-1 rounded-2xl px-4 py-3 text-white text-sm font-mono font-bold focus:outline-none"
+                  className="flex-1 rounded-2xl px-4 py-3 text-white text-base font-mono font-bold focus:outline-none"
                   style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(244,0,9,0.3)' }}
                 />
                 <button

@@ -39,14 +39,14 @@ export default function LoginPage() {
   }
 
   const inputClass =
-    'w-full bg-white/8 border border-white/15 rounded-2xl px-4 py-3.5 text-white placeholder-white/30 text-sm focus:outline-none focus:border-brand-red focus:bg-white/12 transition-all'
+    'w-full bg-white/8 border border-white/15 rounded-2xl px-4 py-3.5 text-white placeholder-white/30 text-base focus:outline-none focus:border-brand-red focus:bg-white/12 transition-all'
 
   return (
     <div className="min-h-screen aurora relative flex flex-col">
       {/* Back button */}
-      <div className="p-6 relative z-10">
+      <div className="px-6 pb-6 relative z-10" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
         <Link to="/">
-          <button className="glass text-white/70 hover:text-white flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-all">
+          <button className="glass text-white/70 hover:text-white flex items-center gap-1.5 text-sm font-medium px-4 py-3 rounded-full transition-all">
             <ArrowLeft size={16} />
             {t('common.back')}
           </button>

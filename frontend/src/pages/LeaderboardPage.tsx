@@ -237,7 +237,7 @@ export default function LeaderboardPage() {
                 key={p.key}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setPeriod(p.key)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   period === p.key
                     ? 'bg-brand-red text-white shadow-[0_0_20px_rgba(244,0,9,0.5)]'
                     : 'bg-white/10 text-white/55 hover:bg-white/18'
@@ -257,7 +257,7 @@ export default function LeaderboardPage() {
             key={r.key}
             whileTap={{ scale: 0.95 }}
             onClick={() => setRegion(r.key)}
-            className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[11px] font-bold border transition-all ${
+            className={`whitespace-nowrap px-3.5 py-2 rounded-full text-[11px] font-bold border transition-all ${
               region === r.key
                 ? 'bg-brand-charcoal text-white border-brand-charcoal'
                 : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
