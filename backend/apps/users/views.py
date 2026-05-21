@@ -115,6 +115,29 @@ class LoginView(APIView):
         })
 
 
+class AdminLoginView(APIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [AuthThrottle]
+
+    def post(self, request):
+        phone = request.data.get('phone', '').strip()[:50]
+        password = request.data.get('password', '').strip()[:200]
+        if not phone or not password:
+            return Response({'error': 'Phone and password are required'}, status=400)
+        user = User.objects.filter(phone=phone).first()
+        if not user or not user.check_password(password):
+            logger.warning('Failed admin login attempt')
+            return Response({'error': 'Invalid credentials'}, status=401)
+        if not user.is_staff:
+            return Response({'error': 'Admin access only'}, status=403)
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': UserSerializer(user).data,
+        })
+
+
 class RefreshView(TokenRefreshView):
     pass
 

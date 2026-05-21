@@ -22,7 +22,7 @@ export default function AdminLayout() {
   const { pathname } = useLocation()
 
   if (!user?.is_staff) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/admin/login" replace />
   }
 
   return (

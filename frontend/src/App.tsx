@@ -34,6 +34,7 @@ const ScorecardPage = lazy(() => import('@/pages/admin/ScorecardPage'))
 const AdminPrizesPage = lazy(() => import('@/pages/admin/AdminPrizesPage'))
 const AdminRedemptionsPage = lazy(() => import('@/pages/admin/AdminRedemptionsPage'))
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'))
+const AdminLoginPage = lazy(() => import('@/pages/admin/AdminLoginPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 function LoadingSpinner() {
@@ -74,6 +75,9 @@ export default function App() {
                 <Route path="impact" element={<ImpactPage />} />
               </Route>
             </Route>
+
+            {/* Admin login — standalone, no AdminLayout wrapper */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
 
             {/* Admin dashboard — AdminLayout checks is_staff itself */}
             <Route path="/admin" element={<AdminLayout />}>

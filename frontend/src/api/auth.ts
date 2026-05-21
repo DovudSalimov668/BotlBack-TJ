@@ -63,3 +63,16 @@ export function useLogin() {
     },
   })
 }
+
+export function useAdminLogin() {
+  const { setTokens, setUser } = useAuthStore()
+  return useMutation({
+    mutationFn: (data: { phone: string; password: string }) =>
+      api.post('/auth/admin-login/', data).then((r) => r.data),
+    onSuccess: (data) => {
+      setTokens(data.access, data.refresh)
+      setUser(data.user)
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+    },
+  })
+}
