@@ -71,6 +71,7 @@ class RegisterView(APIView):
                 scan_type='referral_bonus',
                 region=referrer.region or 'dushanbe',
                 points_awarded=settings.REFERRAL_BONUS_POINTS,
+                created_at=timezone.now(),
             )
             Scan.objects.create(
                 bottle=None,
@@ -78,6 +79,7 @@ class RegisterView(APIView):
                 scan_type='referral_bonus',
                 region=user.region or 'dushanbe',
                 points_awarded=settings.REFERRAL_BONUS_POINTS,
+                created_at=timezone.now(),
             )
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -332,6 +334,7 @@ class AdminUserDetailView(APIView):
                     scan_type='admin_adjustment',
                     region=user.region or 'dushanbe',
                     points_awarded=delta,
+                    created_at=timezone.now(),
                 )
         return Response({
             'id': user.id,
