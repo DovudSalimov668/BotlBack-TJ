@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Html5Qrcode } from 'html5-qrcode'
 import { useScanBottle, useRecycleBottle, verifyRecyclingPoint } from '@/api/bottles'
 import api from '@/lib/axios'
-import { ArrowLeft, Zap, QrCode, Keyboard, ChevronRight, MapPin, RotateCcw, Recycle } from 'lucide-react'
+import { ArrowLeft, Zap, QrCode, Keyboard, ChevronRight, MapPin, RotateCcw, Recycle, Wine } from 'lucide-react'
 
 // ── QR type detection ─────────────────────────────────────────────────────────
 function getQRType(code: string): 'bottle' | 'recycling_point' | 'unknown' {
@@ -530,7 +530,9 @@ export default function ScanPage() {
                         border: `1px solid ${isRP ? 'rgba(0,166,81,0.2)' : 'rgba(244,0,9,0.2)'}`,
                       }}
                     >
-                      <span className="text-base">{isRP ? '♻️' : '🍾'}</span>
+                      {isRP
+                        ? <Recycle size={16} className="flex-shrink-0 text-brand-eco" />
+                        : <Wine size={16} className="flex-shrink-0 text-brand-red" />}
                       <div className="min-w-0">
                         <p className="text-white/80 text-[11px] font-bold truncate">{label}</p>
                         <p className="text-white/30 text-[10px] font-mono truncate">{code}</p>

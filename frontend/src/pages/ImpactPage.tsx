@@ -28,7 +28,7 @@ export default function ImpactPage() {
   const communityPct = Math.round((bottles / Math.max(COMMUNITY_RECYCLED, 1)) * 100)
 
   const share = async () => {
-    const text = `🌱 Я сдал(а) ${bottles} бутылок Coca-Cola на переработку!\n\n♻️ Спас(ла) ${co2} кг CO₂\n🌳 Это как посадить ${trees} дерева\n\nПрисоединяйся: botlback.tj`
+    const text = `Я сдал(а) ${bottles} бутылок Coca-Cola на переработку! Спас(ла) ${co2} кг CO2. Это как посадить ${trees} дерева. Присоединяйся: botlback.tj`
     if (navigator.share) {
       await navigator.share({ title: 'Мой эко-вклад — BotlBack TJ', text }).catch(() => {})
     } else {
@@ -61,7 +61,7 @@ export default function ImpactPage() {
             Мой эко-вклад
           </div>
           <h1 className="text-white font-black text-4xl lg:text-5xl leading-tight mb-2">
-            Ты меняешь мир<br />к лучшему 🌍
+            Ты меняешь мир<br />к лучшему
           </h1>
           <p className="text-white/60 text-sm max-w-xs mt-3 leading-relaxed">
             Каждая сданная тобой бутылка — это реальный вклад в будущее Таджикистана

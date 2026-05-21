@@ -7,18 +7,10 @@ import {
   useAdminOutlets, useCreateOutlet, useUpdateOutlet, useDeleteOutlet,
   type AdminOutlet,
 } from '@/api/admin'
+import { REGIONS as REGION_KEYS, REGION_NAMES } from '@/lib/regions'
 
-const REGIONS = [
-  { value: 'dushanbe', label: 'Душанбе' },
-  { value: 'sughd', label: 'Согд' },
-  { value: 'khatlon', label: 'Хатлон' },
-  { value: 'gbao', label: 'ГБАО' },
-  { value: 'rrs', label: 'РРС' },
-]
-
-const REGION_LABEL: Record<string, string> = {
-  dushanbe: 'Душанбе', sughd: 'Согд', khatlon: 'Хатлон', gbao: 'ГБАО', rrs: 'РРС',
-}
+const REGIONS = REGION_KEYS.map((r) => ({ value: r, label: REGION_NAMES[r] }))
+const REGION_LABEL = REGION_NAMES
 
 const EMPTY: Partial<AdminOutlet> = {
   name: '', name_tg: '', address: '', latitude: 38.5598, longitude: 68.7738,

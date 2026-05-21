@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import { MapPin, Navigation, X, Recycle, ChevronUp, Search } from 'lucide-react'
 import { useRecyclingPoints } from '@/api/recycling'
+import { REGION_COLORS } from '@/lib/regions'
 import 'leaflet/dist/leaflet.css'
 
 type RecyclingPoint = {
@@ -15,14 +16,6 @@ type RecyclingPoint = {
   longitude: number
   region: string
   qr_code: string
-}
-
-const regionColors: Record<string, string> = {
-  dushanbe: '#F40009',
-  sughd:    '#FF6B35',
-  khatlon:  '#FFB800',
-  gbao:     '#00A651',
-  rrs:      '#0066CC',
 }
 
 function FlyToPoint({ lat, lng }: { lat: number; lng: number }) {
@@ -119,7 +112,7 @@ export default function MapPage() {
             {flyTarget && <FlyToPoint lat={flyTarget.lat} lng={flyTarget.lng} />}
 
             {(points as RecyclingPoint[] | undefined)?.map((rp) => {
-              const color = regionColors[rp.region] ?? '#F40009'
+              const color = REGION_COLORS[rp.region] ?? '#F40009'
               const isActive = selected?.id === rp.id
               return (
                 <CircleMarker
@@ -190,7 +183,7 @@ export default function MapPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center" style={{ background: regionColors[selected.region] ?? '#F40009' }}>
+                    <div className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center" style={{ background: REGION_COLORS[selected.region] ?? '#F40009' }}>
                       <Recycle size={18} className="text-white" />
                     </div>
                     <div className="min-w-0">
@@ -269,14 +262,14 @@ export default function MapPage() {
                 >
                   Все
                 </button>
-                {Object.keys(regionColors).map((r) => (
+                {Object.keys(REGION_COLORS).map((r) => (
                   <button
                     key={r}
                     onClick={() => setRegionFilter(regionFilter === r ? null : r)}
                     className={`whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold transition-all flex items-center gap-1.5 ${regionFilter === r ? 'text-white' : 'bg-white/10 text-white/55'}`}
-                    style={regionFilter === r ? { background: regionColors[r] } : {}}
+                    style={regionFilter === r ? { background: REGION_COLORS[r] } : {}}
                   >
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: regionFilter === r ? '#fff' : regionColors[r] }} />
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: regionFilter === r ? '#fff' : REGION_COLORS[r] }} />
                     {t(`regions.${r}`)}
                   </button>
                 ))}
@@ -292,7 +285,7 @@ export default function MapPage() {
                 {Object.entries(byRegion ?? {}).map(([region, rps]) => (
                   <div key={region}>
                     <div className="flex items-center gap-2 px-6 py-3 sticky top-0 bg-[#111]">
-                      <div className="w-2 h-2 rounded-full" style={{ background: regionColors[region] ?? '#F40009' }} />
+                      <div className="w-2 h-2 rounded-full" style={{ background: REGION_COLORS[region] ?? '#F40009' }} />
                       <span className="text-white/40 text-xs font-bold uppercase tracking-widest capitalize">{region}</span>
                     </div>
                     {rps.map((rp, i) => (
@@ -304,8 +297,8 @@ export default function MapPage() {
                         onClick={() => handleSelectPoint(rp)}
                         className="w-full flex items-center gap-4 px-6 py-3 hover:bg-white/5 transition-colors text-left"
                       >
-                        <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: `${regionColors[region]}22` }}>
-                          <Recycle size={14} style={{ color: regionColors[region] ?? '#F40009' }} />
+                        <div className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: `${REGION_COLORS[region]}22` }}>
+                          <Recycle size={14} style={{ color: REGION_COLORS[region] ?? '#F40009' }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white/90 text-sm font-semibold truncate">{rp.name}</p>

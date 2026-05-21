@@ -90,15 +90,15 @@ export function CocaColaShowcase({ size = 260, rings = true, className = '' }: C
           style={{ rotateY: -25, translateZ: -4, background: 'rgba(244,0,9,0.18)', filter: 'blur(8px)', scaleX: 0.35 }}
         />
 
-        {/* Bottle image */}
+        {/* Transparent PNG bottle — no container needed */}
         <img
-          src="/products/coca-cola.svg"
+          src="/products/coca-cola.png"
           alt="Coca-Cola bottle"
           style={{
             height: size,
             width: 'auto',
-            filter: 'drop-shadow(0 24px 48px rgba(244,0,9,0.55)) drop-shadow(0 4px 12px rgba(0,0,0,0.4))',
-            display: 'block',
+            objectFit: 'contain',
+            filter: `drop-shadow(0 24px 48px rgba(0,0,0,0.7)) drop-shadow(0 6px 16px rgba(0,0,0,0.5))`,
           }}
           draggable={false}
         />

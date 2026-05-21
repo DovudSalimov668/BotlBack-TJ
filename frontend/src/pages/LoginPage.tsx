@@ -1,15 +1,19 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Phone, Hash, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLogin, useRegister } from '@/api/auth'
+import { useAuthStore } from '@/store/authStore'
 import { logger } from '@/lib/logger'
 
 export default function LoginPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
+  const { isAuthenticated } = useAuthStore()
+
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [phone, setPhone] = useState('+992')
   const [name, setName] = useState('')
@@ -19,27 +23,44 @@ export default function LoginPage() {
   const login = useLogin()
   const register = useRegister()
 
-  const handlePhoneSubmit = (e: React.FormEvent) => {
+  // Already logged in — send to the page they came from, or wallet
+  if (isAuthenticated) {
+    const from = (location.state as { from?: string })?.from ?? '/wallet'
+    return <Navigate to={from} replace />
+  }
+
+  const redirectAfterAuth = () => {
+    const from = (location.state as { from?: string })?.from ?? '/wallet'
+    navigate(from, { replace: true })
+  }
+
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStep('otp')
+    if (mode === 'register') {
+      // Registration does not use OTP — complete immediately
+      try {
+        await register.mutateAsync({ phone, name })
+        redirectAfterAuth()
+      } catch (err: unknown) {
+        logger.error('Register failed', err)
+      }
+    } else {
+      setStep('otp')
+    }
   }
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      if (mode === 'register') {
-        await register.mutateAsync({ phone, name })
-      } else {
-        await login.mutateAsync({ phone, otp })
-      }
-      navigate('/wallet')
+      await login.mutateAsync({ phone, otp })
+      redirectAfterAuth()
     } catch (err: unknown) {
-      logger.error('Auth failed', err)
+      logger.error('Login failed', err)
     }
   }
 
   const inputClass =
-    'w-full bg-white/8 border border-white/15 rounded-2xl px-4 py-3.5 text-white placeholder-white/30 text-base focus:outline-none focus:border-brand-red focus:bg-white/12 transition-all'
+    'w-full bg-black/30 border border-white/15 rounded-2xl px-4 py-3.5 text-white placeholder-white/30 text-base focus:outline-none focus:border-brand-red focus:bg-black/40 transition-all caret-white'
 
   return (
     <div className="min-h-screen aurora relative flex flex-col">
@@ -70,7 +91,8 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 24, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="glass rounded-3xl p-7 shadow-2xl"
+          className="rounded-3xl p-7 shadow-2xl"
+          style={{ background: 'rgba(15,5,8,0.65)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', border: '1px solid rgba(255,255,255,0.10)' }}
         >
           <div className="mb-7">
             <h2 className="text-white text-xl font-black tracking-tight">
@@ -103,7 +125,7 @@ export default function LoginPage() {
                   {t('auth.phone')}
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-4 top-3.5 text-white/30" size={17} />
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" size={17} />
                   <input
                     type="tel"
                     value={phone}
@@ -130,9 +152,11 @@ export default function LoginPage() {
                   {t('auth.otp')}
                 </label>
                 <div className="relative">
-                  <Hash className="absolute left-4 top-3.5 text-white/30" size={17} />
+                  <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" size={17} />
                   <input
-                    type="number"
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="1234"

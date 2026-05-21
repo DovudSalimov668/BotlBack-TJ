@@ -117,10 +117,10 @@
     line-height: 0.95;
   }
 
-  /* Aurora flowing background — used on hero panels */
+  /* Aurora flowing background — deep red, Coca-Cola brand */
   .aurora {
     position: relative;
-    background: #0A0A0A;
+    background: #0D0205;
     overflow: hidden;
   }
   .aurora::before {
@@ -128,11 +128,11 @@
     position: absolute;
     inset: -40%;
     background:
-      radial-gradient(closest-side, rgba(244,0,9,0.85), transparent 70%) 10% 20% / 60% 60% no-repeat,
-      radial-gradient(closest-side, rgba(255,184,0,0.55), transparent 70%) 80% 10% / 55% 55% no-repeat,
-      radial-gradient(closest-side, rgba(0,166,81,0.45), transparent 70%) 70% 80% / 60% 60% no-repeat,
-      radial-gradient(closest-side, rgba(108,99,255,0.45), transparent 70%) 20% 90% / 55% 55% no-repeat;
-    filter: blur(50px);
+      radial-gradient(closest-side, rgba(244,0,9,0.90), transparent 70%) 15% 20% / 65% 65% no-repeat,
+      radial-gradient(closest-side, rgba(180,0,6,0.65), transparent 70%) 80% 15% / 55% 55% no-repeat,
+      radial-gradient(closest-side, rgba(100,0,4,0.55), transparent 70%) 60% 85% / 60% 60% no-repeat,
+      radial-gradient(closest-side, rgba(255,40,40,0.30), transparent 70%) 25% 80% / 45% 45% no-repeat;
+    filter: blur(55px);
     animation: aurora-drift 24s ease-in-out infinite alternate;
     pointer-events: none;
     z-index: 0;
@@ -141,8 +141,8 @@
 
   @keyframes aurora-drift {
     0%   { transform: translate3d(-3%, -2%, 0) rotate(0deg)   scale(1.05); }
-    50%  { transform: translate3d( 3%,  2%, 0) rotate(20deg)  scale(1.15); }
-    100% { transform: translate3d(-2%,  3%, 0) rotate(-12deg) scale(1.08); }
+    50%  { transform: translate3d( 3%,  2%, 0) rotate(15deg)  scale(1.12); }
+    100% { transform: translate3d(-2%,  3%, 0) rotate(-10deg) scale(1.08); }
   }
 
   /* Animated gradient text */
@@ -207,6 +207,17 @@
   /* Hide on mobile (cursor effects only on >= md) */
   @media (max-width: 768px) {
     .desktop-only { display: none !important; }
+  }
+
+  /* Browser autofill override — keeps white text visible on dark glass inputs */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: white !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.45) inset !important;
+    transition: background-color 9999s ease-in-out 0s;
+    caret-color: white;
   }
 
   /* Safe-area helpers for notched / bottom-bar phones */

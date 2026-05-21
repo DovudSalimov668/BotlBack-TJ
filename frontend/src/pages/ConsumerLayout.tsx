@@ -1,18 +1,19 @@
 import { Outlet, useLocation, Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { QrCode, Wallet, Gift, Leaf, MapPin, User, Recycle, Trophy } from 'lucide-react'
+import { QrCode, Wallet, Gift, Leaf, MapPin, User, Recycle, Trophy, LogIn, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
 import { OnboardingModal } from '@/components/OnboardingModal'
 import { CampaignBanner } from '@/components/CampaignBanner'
 
 const navItems = [
-  { path: '/scan',        icon: QrCode,  key: 'nav.scan'         },
-  { path: '/wallet',      icon: Wallet,  key: 'nav.wallet'       },
-  { path: '/rewards',     icon: Gift,    key: 'nav.rewards'      },
-  { path: '/impact',      icon: Leaf,    key: 'nav.impact'       },
-  { path: '/map',         icon: MapPin,  key: 'nav.map'          },
+  { path: '/scan',        icon: QrCode,  key: 'nav.scan',    auth: true  },
+  { path: '/wallet',      icon: Wallet,  key: 'nav.wallet',  auth: true  },
+  { path: '/rewards',     icon: Gift,    key: 'nav.rewards', auth: true  },
+  { path: '/impact',      icon: Leaf,    key: 'nav.impact',  auth: true  },
+  { path: '/map',         icon: MapPin,  key: 'nav.map',     auth: false },
 ]
 
 const pageVariants = {
@@ -28,7 +29,7 @@ const pageTransition = {
 }
 
 /* ── Desktop sidebar ── */
-function DesktopSidebar({ pathname }: { pathname: string }) {
+function DesktopSidebar({ pathname, collapsed, onToggle }: { pathname: string; collapsed: boolean; onToggle: () => void }) {
   const { t } = useTranslation()
   const { user } = useAuthStore()
 
@@ -37,63 +38,111 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
     : '?'
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 fixed left-0 top-0 h-full z-40"
-      style={{ background: '#0A0A0A', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-
-      {/* Logo */}
-      <div className="px-6 py-7 border-b border-white/6">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-brand-red rounded-xl flex items-center justify-center flex-shrink-0">
+    <motion.aside
+      className="hidden lg:flex flex-col fixed left-0 top-0 h-full z-40 overflow-hidden"
+      animate={{ width: collapsed ? 64 : 256 }}
+      transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+      style={{ background: '#0A0A0A', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+    >
+      {/* Logo + toggle */}
+      <div className="px-3 py-5 border-b border-white/6 flex items-center justify-between gap-2 flex-shrink-0">
+        {!collapsed && (
+          <Link to="/" className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 bg-brand-red rounded-xl flex items-center justify-center flex-shrink-0">
+              <Recycle size={17} className="text-white" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-white text-sm font-black tracking-tight leading-none">BotlBack TJ</h1>
+              <p className="text-white/30 text-[10px] mt-0.5">Coca-Cola İçecek</p>
+            </div>
+          </Link>
+        )}
+        {collapsed && (
+          <div className="w-9 h-9 bg-brand-red rounded-xl flex items-center justify-center flex-shrink-0 mx-auto">
             <Recycle size={17} className="text-white" />
           </div>
-          <div>
-            <h1 className="text-white text-sm font-black tracking-tight leading-none">BotlBack TJ</h1>
-            <p className="text-white/30 text-[10px] mt-0.5">Coca-Cola İçecek</p>
-          </div>
-        </Link>
+        )}
+        <button
+          onClick={onToggle}
+          className={cn('text-white/30 hover:text-white transition-colors flex-shrink-0', collapsed && 'hidden')}
+          title="Свернуть меню"
+        >
+          <PanelLeftClose size={16} />
+        </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1">
-        {[...navItems, { path: '/leaderboard', icon: Trophy, key: 'nav.leaderboard' }].map(({ path, icon: Icon, key }) => {
-          const active = pathname === path || (path !== '/' && pathname.startsWith(path))
-          return (
-            <Link key={path} to={path}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all',
-                active
-                  ? 'bg-brand-red text-white shadow-[0_4px_20px_rgba(244,0,9,0.3)]'
-                  : 'text-white/35 hover:bg-white/6 hover:text-white'
-              )}>
-              <Icon size={17} strokeWidth={active ? 2.5 : 1.8} />
-              {t(key)}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 p-2 space-y-0.5 overflow-hidden">
+        {[...navItems, { path: '/leaderboard', icon: Trophy, key: 'nav.leaderboard', auth: false }]
+          .filter(item => !item.auth || !!user)
+          .map(({ path, icon: Icon, key }) => {
+            const active = pathname === path || (path !== '/' && pathname.startsWith(path))
+            return (
+              <Link key={path} to={path}
+                title={collapsed ? t(key) : undefined}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-3 rounded-2xl text-sm font-semibold transition-all whitespace-nowrap overflow-hidden',
+                  collapsed ? 'justify-center' : '',
+                  active
+                    ? 'bg-brand-red text-white shadow-[0_4px_20px_rgba(244,0,9,0.3)]'
+                    : 'text-white/35 hover:bg-white/6 hover:text-white'
+                )}>
+                <Icon size={17} strokeWidth={active ? 2.5 : 1.8} className="flex-shrink-0" />
+                {!collapsed && t(key)}
+              </Link>
+            )
+          })}
+
+        {/* Expand button when collapsed */}
+        {collapsed && (
+          <button
+            onClick={onToggle}
+            title="Развернуть меню"
+            className="w-full flex items-center justify-center px-3 py-3 rounded-2xl text-white/20 hover:text-white hover:bg-white/6 transition-all"
+          >
+            <PanelLeftOpen size={17} />
+          </button>
+        )}
       </nav>
 
-      {/* User */}
-      {user && (
-        <div className="p-4 border-t border-white/6">
-          <Link to="/profile" className="flex items-center gap-3 px-2 py-2 rounded-2xl hover:bg-white/6 transition-colors group">
+      {/* User or Login */}
+      <div className="p-2 border-t border-white/6 flex-shrink-0">
+        {user ? (
+          <Link to="/profile"
+            title={collapsed ? user.name : undefined}
+            className={cn('flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-white/6 transition-colors group overflow-hidden', collapsed && 'justify-center')}>
             <div className="w-9 h-9 bg-brand-red rounded-2xl flex items-center justify-center text-white text-sm font-black flex-shrink-0">
               {initials}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-xs font-bold truncate">{user.name}</p>
-              <p className="text-white/30 text-[10px]">{t('profile.my_profile')}</p>
-            </div>
-            <User size={13} className="text-white/20 group-hover:text-white/50 transition-colors flex-shrink-0" />
+            {!collapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-xs font-bold truncate">{user.name}</p>
+                <p className="text-white/30 text-[10px]">{t('profile.my_profile')}</p>
+              </div>
+            )}
           </Link>
-        </div>
-      )}
-    </aside>
+        ) : (
+          <Link to="/login"
+            title={collapsed ? t('auth.login') : undefined}
+            className={cn('flex items-center gap-3 px-3 py-3 rounded-2xl bg-brand-red text-white text-sm font-black transition-all hover:bg-red-600 overflow-hidden', collapsed && 'justify-center')}>
+            <LogIn size={17} className="flex-shrink-0" />
+            {!collapsed && t('auth.login')}
+          </Link>
+        )}
+      </div>
+    </motion.aside>
   )
 }
 
 /* ── Mobile bottom nav ── */
 function MobileBottomNav({ pathname }: { pathname: string }) {
   const { t } = useTranslation()
+  const { user } = useAuthStore()
+
+  const visibleItems = user
+    ? navItems
+    : [...navItems.filter(i => !i.auth), { path: '/login', icon: LogIn, key: 'auth.login', auth: false }]
+
   return (
     <nav className="lg:hidden fixed left-2 right-2 z-50 bottom-safe-4">
       <div className="flex items-center justify-around max-w-lg mx-auto rounded-[2rem] px-1 py-1.5
@@ -104,15 +153,16 @@ function MobileBottomNav({ pathname }: { pathname: string }) {
           WebkitBackdropFilter: 'blur(28px)',
           border: '1px solid rgba(255,255,255,0.08)',
         }}>
-        {navItems.map(({ path, icon: Icon, key }) => {
+        {visibleItems.map(({ path, icon: Icon, key }) => {
           const active = pathname === path || (path !== '/' && pathname.startsWith(path))
+          const isLogin = path === '/login'
           return (
             <Link key={path} to={path}
               className="relative flex flex-col items-center gap-0.5 py-2.5 flex-1 rounded-2xl transition-all min-w-0">
-              {active && <span className="absolute inset-0 bg-brand-red rounded-2xl" style={{ zIndex: -1 }} />}
-              <Icon size={19} strokeWidth={active ? 2.5 : 1.8}
-                className={cn('transition-colors flex-shrink-0', active ? 'text-white' : 'text-white/40')} />
-              <span className={cn('text-[9px] font-semibold transition-colors truncate w-full text-center leading-none', active ? 'text-white' : 'text-white/30')}>
+              {(active || isLogin) && <span className={cn('absolute inset-0 rounded-2xl', isLogin && !active ? 'bg-brand-red/80' : 'bg-brand-red')} style={{ zIndex: -1 }} />}
+              <Icon size={19} strokeWidth={active || isLogin ? 2.5 : 1.8}
+                className={cn('transition-colors flex-shrink-0', active || isLogin ? 'text-white' : 'text-white/40')} />
+              <span className={cn('text-[9px] font-semibold transition-colors truncate w-full text-center leading-none', active || isLogin ? 'text-white' : 'text-white/30')}>
                 {t(key)}
               </span>
             </Link>
@@ -127,25 +177,32 @@ export default function ConsumerLayout() {
   const location = useLocation()
   const { pathname } = location
   const { t } = useTranslation()
+  const { user } = useAuthStore()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const isFullscreen = pathname.startsWith('/scan')
   const hideChrome = isFullscreen || pathname === '/map'
 
-  return (
-    <div className="flex min-h-screen bg-[#F4F4F4]">
-      {/* Desktop sidebar — hidden on scan/map pages */}
-      {!hideChrome && <DesktopSidebar pathname={pathname} />}
+  const sidebarWidth = sidebarCollapsed ? 64 : 256
 
-      {/* Main column */}
-      <div className={cn('flex-1 flex flex-col', !hideChrome && 'lg:ml-64')}>
+  return (
+    <div className="flex min-h-screen bg-[#F8F8F8]">
+      {/* Desktop sidebar — hidden on scan/map pages */}
+      {!hideChrome && <DesktopSidebar pathname={pathname} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(v => !v)} />}
+
+      {/* Main column — animated left margin tracks sidebar width */}
+      <motion.div
+        className="flex-1 flex flex-col min-w-0"
+        animate={{ marginLeft: hideChrome ? 0 : sidebarWidth }}
+        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+      >
 
         {/* Mobile header — not shown on scan/map pages */}
         {!hideChrome && (
           <header className="lg:hidden sticky top-0 z-30 px-5 py-3 flex items-center justify-between"
             style={{
-              background: 'rgba(255,255,255,0.88)',
+              background: 'rgba(248,248,248,0.92)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
             }}>
             <Link to="/" className="flex items-center gap-2">
               <div className="w-7 h-7 bg-brand-red rounded-lg flex items-center justify-center">
@@ -153,37 +210,45 @@ export default function ConsumerLayout() {
               </div>
               <span className="font-black text-brand-charcoal text-base tracking-tight">BotlBack TJ</span>
             </Link>
-            <Link to="/profile"
-              className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
-              <User size={17} className="text-gray-600" />
-            </Link>
+            {user ? (
+              <Link to="/profile"
+                className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
+                <User size={17} className="text-gray-600" />
+              </Link>
+            ) : (
+              <Link to="/login"
+                className="flex items-center gap-1.5 bg-brand-red text-white text-xs font-black px-3 py-2 rounded-xl transition-colors hover:bg-red-600">
+                <LogIn size={13} />
+                Войти
+              </Link>
+            )}
           </header>
         )}
 
-        {/* Desktop top-bar — breadcrumb / page title */}
-        {!hideChrome && (
-          <div className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-gray-200 bg-white sticky top-0 z-30">
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <span className="font-medium">BotlBack TJ</span>
-              <span>/</span>
-              <span className="text-brand-charcoal font-semibold capitalize">
-                {pathname.split('/').filter(Boolean)[0] ?? 'Главная'}
+        {/* Desktop top-bar — only shown when sidebar is collapsed */}
+        {!hideChrome && sidebarCollapsed && (
+          <div className="hidden lg:flex items-center justify-between px-6 py-3 sticky top-0 z-30"
+            style={{ background: 'rgba(248,248,248,0.92)', backdropFilter: 'blur(20px)' }}>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span className="font-semibold text-brand-charcoal capitalize">
+                {pathname.split('/').filter(Boolean)[0] ?? 'BotlBack TJ'}
               </span>
             </div>
-            <Link to="/profile"
-              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors">
-              <div className="w-7 h-7 bg-brand-red rounded-full flex items-center justify-center">
-                <User size={13} className="text-white" />
-              </div>
-              {t('nav.profile')}
-            </Link>
+            {user && (
+              <Link to="/profile"
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                <div className="w-7 h-7 bg-brand-red rounded-full flex items-center justify-center">
+                  <User size={13} className="text-white" />
+                </div>
+              </Link>
+            )}
           </div>
         )}
 
         {/* Campaign banner */}
         {!hideChrome && <CampaignBanner />}
 
-        {/* Page content */}
+        {/* Page content — full width, each page controls its own max-width */}
         <main className={cn('flex-1', !hideChrome && 'pb-nav lg:pb-8')}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -193,18 +258,18 @@ export default function ConsumerLayout() {
               animate="animate"
               exit="exit"
               transition={pageTransition}
-              className={cn(!hideChrome && 'max-w-4xl mx-auto w-full')}
+              className="w-full"
             >
               <Outlet />
             </motion.div>
           </AnimatePresence>
         </main>
-      </div>
 
-      <OnboardingModal />
+        <OnboardingModal />
 
-      {/* Mobile bottom nav */}
-      {!isFullscreen && <MobileBottomNav pathname={pathname} />}
+        {/* Mobile bottom nav */}
+        {!isFullscreen && <MobileBottomNav pathname={pathname} />}
+      </motion.div>
     </div>
   )
 }

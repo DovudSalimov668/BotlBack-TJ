@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { RotateCcw } from 'lucide-react'
 import { logger } from '@/lib/logger'
 
 interface Props { children: ReactNode }
@@ -21,7 +22,9 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F8F8F8] p-6">
         <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-lg text-center">
-          <div className="text-5xl mb-4">🔄</div>
+          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <RotateCcw size={28} className="text-brand-red" />
+          </div>
           <h1 className="text-xl font-black text-brand-charcoal mb-2">Что-то пошло не так</h1>
           <p className="text-gray-500 text-sm mb-6">Попробуйте перезагрузить страницу</p>
           <button

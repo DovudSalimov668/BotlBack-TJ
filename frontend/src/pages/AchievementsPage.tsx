@@ -31,7 +31,7 @@ export default function AchievementsPage() {
             </button>
             <ShareButton
               title="Мои достижения"
-              text={`Я разблокировал ${unlocked}/${total} достижений в BotlBack TJ! 🏆`}
+              text={`Я разблокировал ${unlocked}/${total} достижений в BotlBack TJ!`}
               className="w-10 h-10 glass rounded-full flex items-center justify-center text-white"
               size={16}
             />

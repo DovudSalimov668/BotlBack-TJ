@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Recycle, Leaf, Trophy, ArrowRight, QrCode, Zap, Sparkles, TrendingUp, Award } from 'lucide-react'
+import { Recycle, Leaf, Trophy, ArrowRight, QrCode, Zap, Sparkles, TrendingUp, Award, Flame } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { NumberRoll } from '@/components/NumberRoll'
 import { StreakBadge } from '@/components/StreakBadge'
@@ -95,7 +95,7 @@ export default function WalletPage() {
             <div className="flex items-center gap-2">
               <ShareButton
                 title="Мой кошелёк BotlBack"
-                text={`У меня ${points} pts в BotlBack TJ! 🌱 Уровень ${tier.label}`}
+                text={`У меня ${points} pts в BotlBack TJ! Уровень ${tier.label}`}
                 className="w-10 h-10 glass rounded-full flex items-center justify-center text-white"
               />
               {/* Tier badge — conic gold ring */}
@@ -314,7 +314,7 @@ export default function WalletPage() {
           >
             <div className="absolute inset-0" style={{ background: 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.04\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E")' }} />
             <Link to="/scan" className="relative flex items-center gap-4 p-5">
-              <div className="text-3xl flex-shrink-0">🔥</div>
+              <Flame size={28} className="text-white flex-shrink-0" fill="rgba(255,255,255,0.3)" />
               <div className="flex-1 min-w-0">
                 <p className="text-white font-black text-sm leading-tight">Серия {streakDays} {streakDays === 1 ? 'день' : streakDays < 5 ? 'дня' : 'дней'}!</p>
                 <p className="text-white/70 text-xs mt-0.5">Отсканируй сегодня, чтобы не потерять серию</p>

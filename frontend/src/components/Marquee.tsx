@@ -9,7 +9,7 @@ interface MarqueeProps {
  * so the loop is seamless.
  */
 export function Marquee({ items, className = '', separator }: MarqueeProps) {
-  const sep = separator ?? <span className="text-brand-red mx-6" aria-hidden>★</span>
+  const sep = separator ?? <span className="text-brand-red/40 mx-5 text-xs font-bold" aria-hidden>·</span>
 
   const Track = () => (
     <div className="flex items-center shrink-0 px-4">

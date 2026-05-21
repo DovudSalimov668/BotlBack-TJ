@@ -3,15 +3,13 @@ import { useRegions, useOverview, useSKUs } from '@/api/analytics'
 import { NumberRoll } from '@/components/NumberRoll'
 import { Printer, TrendingUp, Globe, Leaf, Users, Recycle, Target, BarChart3, Zap, Award } from 'lucide-react'
 import { RadialBarChart, RadialBar, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts'
+import { CHART_COLORS as COLORS, REGION_NAMES } from '@/lib/regions'
 
 const PILOT_DAYS = 30
-const SCALE_MULTIPLIER = 5   // extrapolate to all-Tajikistan
-
-const ROI_COST_USD = 15_000  // pilot dev cost estimate
-const BRAND_VALUE_PER_RECYCLE = 0.12  // USD brand equity per recycled bottle
-const ALIF_PARTNERSHIP_VALUE = 3_000  // USD estimated partnership value
-
-const COLORS = ['#F40009', '#FF6B35', '#FFB800', '#00A651', '#6C63FF']
+const SCALE_MULTIPLIER = 5
+const ROI_COST_USD = 15_000
+const BRAND_VALUE_PER_RECYCLE = 0.12
+const ALIF_PARTNERSHIP_VALUE = 3_000
 
 const customTip = {
   background: '#1E1E1E', border: 'none', borderRadius: 12,
@@ -55,7 +53,7 @@ export default function ScorecardPage() {
   const scaledCO2 = +(scaledRecycled * 0.082 / 1000).toFixed(1)  // in tonnes
 
   const regionChartData = regions?.map((r: { region: string; recycling_rate: number; bottles_recycled: number }) => ({
-    name: { dushanbe: 'Душанбе', sughd: 'Согд', khatlon: 'Хатлон', gbao: 'ГБАО', rrs: 'РРС' }[r.region] ?? r.region,
+    name: REGION_NAMES[r.region] ?? r.region,
     value: r.bottles_recycled,
     rate: r.recycling_rate,
   })) ?? []
@@ -138,7 +136,7 @@ export default function ScorecardPage() {
               <div className="mt-3 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <div className="w-2 h-2 rounded-full bg-brand-eco" />
-                  Душанбе: 62% ★ лучший регион
+                  Душанбе: 62% — лучший регион
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <div className="w-2 h-2 rounded-full bg-gray-300" />

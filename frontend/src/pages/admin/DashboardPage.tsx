@@ -6,6 +6,7 @@ import {
   BarChart, Bar, CartesianGrid, Cell,
 } from 'recharts'
 import { NumberRoll } from '@/components/NumberRoll'
+import { CHART_COLORS } from '@/lib/regions'
 import { useOverview, useTimeSeries, useRegions, useLiveFeed } from '@/api/analytics'
 import { useState, useEffect, useRef } from 'react'
 
@@ -313,7 +314,7 @@ export default function AdminDashboardPage() {
               />
               <Bar dataKey="rate" name="%" radius={[8, 8, 0, 0]} animationDuration={1200}>
                 {regionData.map((_: unknown, i: number) => (
-                  <Cell key={i} fill={['#F40009', '#FF6B35', '#FFB800', '#00A651', '#6C63FF'][i % 5]} />
+                  <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Bar>
             </BarChart>

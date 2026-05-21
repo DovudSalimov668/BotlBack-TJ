@@ -16,7 +16,7 @@ export function ReferralCard() {
   }
 
   const share = async () => {
-    const text = `Присоединяйся к BotlBack TJ — сдавай бутылки Coca-Cola и зарабатывай призы! Используй мой код: ${data.code} и получи бонус ${50} очков! 🌱`
+    const text = `Присоединяйся к BotlBack TJ — сдавай бутылки Coca-Cola и зарабатывай призы! Используй мой код: ${data.code} и получи бонус ${50} очков!`
     if (navigator.share) {
       await navigator.share({ title: 'BotlBack TJ', text }).catch(() => {})
     } else {

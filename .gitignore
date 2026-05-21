@@ -34,3 +34,13 @@ dist/
 # Logs
 *.log
 /tmp/
+
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+*.local
+
+# OS
+.DS_Store
+*.swp

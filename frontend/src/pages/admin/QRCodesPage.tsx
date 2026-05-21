@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
-import { Download, Printer, Wine, Recycle, Copy, Check } from 'lucide-react'
+import { Download, Printer, Wine, Recycle, Copy, Check, Gift } from 'lucide-react'
 import { getProductImage } from '@/lib/productImages'
+import { REGION_COLORS } from '@/lib/regions'
 
 type QREntry = {
   code: string
@@ -31,13 +32,7 @@ const RECYCLING_CODES: QREntry[] = [
   { code: 'RP-RRS-001',  label: 'Базар Ховалинг',     sublabel: 'РРС — Переработка +5',     type: 'recycle', region: 'rrs' },
 ]
 
-const REGION_COLORS: Record<string, string> = {
-  dushanbe: '#F40009',
-  sughd:    '#FF6B35',
-  khatlon:  '#FFB800',
-  gbao:     '#00A651',
-  rrs:      '#0066CC',
-}
+
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
@@ -87,12 +82,13 @@ function QRCard({ entry, size }: { entry: QREntry; size: number }) {
       <div className="flex items-center justify-center gap-4 px-5 pt-5 pb-3">
         {/* bottle image for bottle type */}
         {isBottle && (
-          <img
-            src={getProductImage(entry.label)}
-            alt={entry.label}
-            className="h-20 w-auto flex-shrink-0"
-            style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }}
-          />
+          <div className="h-20 w-14 rounded-xl overflow-hidden bg-white shadow-lg flex items-center justify-center flex-shrink-0 p-1">
+            <img
+              src={getProductImage(entry.label)}
+              alt={entry.label}
+              className="w-full h-full object-contain"
+            />
+          </div>
         )}
         <div className="p-3 rounded-2xl bg-white shadow-lg flex-shrink-0">
           <QRCodeSVG
@@ -197,7 +193,7 @@ export default function QRCodesPage() {
 
         {/* Tabs */}
         <div className="flex gap-2 mt-5">
-          {([['all', 'Все'], ['bottles', '🍾 Бутылки'], ['recycle', '♻️ Пункты приёма']] as const).map(([key, label]) => (
+          {([['all', 'Все'], ['bottles', 'Бутылки'], ['recycle', 'Пункты приёма']] as const).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -271,13 +267,13 @@ export default function QRCodesPage() {
           <h3 className="text-white/50 text-xs font-bold uppercase tracking-widest mb-4">Порядок демонстрации</h3>
           <div className="flex flex-col lg:flex-row gap-4">
             {[
-              { step: '1', icon: '🍾', color: '#F40009', title: 'Купить', desc: 'Отсканировать BTL-DEMO-* бутылку → +1 очко на счёт' },
-              { step: '2', icon: '♻️', color: '#00A651', title: 'Сдать на переработку', desc: 'Отсканировать RP-* пункт приёма → +5 очков, CO₂ сохранено' },
-              { step: '3', icon: '🎁', color: '#FFB800', title: 'Обменять', desc: 'Перейти в «Награды», потратить очки на призы Alif Mobi' },
-            ].map(({ step, icon, color, title, desc }) => (
+              { step: '1', Icon: Wine,    color: '#F40009', title: 'Купить',              desc: 'Отсканировать BTL-DEMO-* бутылку — +1 очко на счёт' },
+              { step: '2', Icon: Recycle, color: '#00A651', title: 'Сдать на переработку', desc: 'Отсканировать RP-* пункт приёма — +5 очков, CO2 сохранено' },
+              { step: '3', Icon: Gift,    color: '#FFB800', title: 'Обменять',             desc: 'Перейти в «Награды», потратить очки на призы Alif Mobi' },
+            ].map(({ step, Icon, color, title, desc }) => (
               <div key={step} className="flex items-start gap-4 flex-1">
-                <div className="w-9 h-9 rounded-2xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: `${color}18` }}>
-                  {icon}
+                <div className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}18` }}>
+                  <Icon size={16} style={{ color }} />
                 </div>
                 <div>
                   <p className="text-white font-black text-sm">{step}. {title}</p>

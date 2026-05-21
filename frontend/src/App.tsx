@@ -7,6 +7,7 @@ import { CursorGlow } from '@/components/CursorGlow'
 import { Toaster } from '@/components/Toast'
 import { SplashScreen } from '@/components/SplashScreen'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { RequireAuth } from '@/components/RequireAuth'
 import '@/lib/i18n'
 import 'leaflet/dist/leaflet.css'
 
@@ -53,20 +54,28 @@ export default function App() {
         <SplashScreen />
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
+            {/* Public auth page */}
             <Route path="/login" element={<LoginPage />} />
+
+            {/* Consumer shell — public pages available to all */}
             <Route element={<ConsumerLayout />}>
               <Route index element={<LandingPage />} />
-              <Route path="scan" element={<ScanPage />} />
-              <Route path="scan/result/:id" element={<ScanResultPage />} />
-              <Route path="wallet" element={<WalletPage />} />
-              <Route path="rewards" element={<RewardsPage />} />
               <Route path="leaderboard" element={<LeaderboardPage />} />
               <Route path="map" element={<MapPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="achievements" element={<AchievementsPage />} />
-              <Route path="impact" element={<ImpactPage />} />
+
+              {/* Protected pages — redirect to /login if not authenticated */}
+              <Route element={<RequireAuth />}>
+                <Route path="scan" element={<ScanPage />} />
+                <Route path="scan/result/:id" element={<ScanResultPage />} />
+                <Route path="wallet" element={<WalletPage />} />
+                <Route path="rewards" element={<RewardsPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="achievements" element={<AchievementsPage />} />
+                <Route path="impact" element={<ImpactPage />} />
+              </Route>
             </Route>
-            <Route path="*" element={<NotFoundPage />} />
+
+            {/* Admin dashboard — AdminLayout checks is_staff itself */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
               <Route path="geographic" element={<GeographicPage />} />
@@ -79,6 +88,8 @@ export default function App() {
               <Route path="redemptions" element={<AdminRedemptionsPage />} />
               <Route path="users" element={<AdminUsersPage />} />
             </Route>
+
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
         {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}

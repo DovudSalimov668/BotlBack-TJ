@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation, Link, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
@@ -18,10 +18,13 @@ export default function ScanResultPage() {
     co2_saved_kg?: number
   } | null
 
-  const [unlockQueue, setUnlockQueue] = useState<UnlockedAchievement[]>(result?.unlocked_achievements ?? [])
+  const [unlockQueue, setUnlockQueue] = useState<UnlockedAchievement[]>(
+    result?.unlocked_achievements ?? []
+  )
 
   useEffect(() => {
-    if (!result?.error) {
+    if (!result) return
+    if (!result.error) {
       const fire = (angle: number, origin: number, particles = 80) =>
         confetti({
           particleCount: particles,
@@ -46,7 +49,10 @@ export default function ScanResultPage() {
     }
   }, [])
 
-  if (result?.error) {
+  // Direct navigation without scan state — redirect to scanner
+  if (!result) return <Navigate to="/scan" replace />
+
+  if (result.error) {
     return (
       <div className="min-h-screen bg-[#F8F8F8] flex flex-col items-center justify-center p-8 text-center">
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 14 }}>
@@ -108,12 +114,13 @@ export default function ScanResultPage() {
             animate={{ rotateY: [0, 8, 0, -8, 0], y: [0, -4, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <img
-              src={getProductImage(result?.sku)}
-              alt={result?.sku ?? 'bottle'}
-              className="h-36 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
-              style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.2))' }}
-            />
+            <div className="w-24 h-32 rounded-2xl overflow-hidden bg-white shadow-[0_12px_40px_rgba(0,0,0,0.5)] flex items-center justify-center p-1">
+              <img
+                src={getProductImage(result?.sku)}
+                alt={result?.sku ?? 'bottle'}
+                className="w-full h-full object-contain"
+              />
+            </div>
           </motion.div>
           {/* check badge */}
           <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${isRecycle ? 'bg-brand-eco' : 'bg-white'}`}>

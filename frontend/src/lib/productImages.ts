@@ -1,23 +1,21 @@
-// Maps brand/sku name keywords → local product image path
 const BRAND_MAP: Record<string, string> = {
-  'coca-cola zero': '/products/coca-cola-zero.svg',
-  'zero':          '/products/coca-cola-zero.svg',
-  'fanta':         '/products/fanta.svg',
-  'sprite':        '/products/sprite.svg',
-  'bonaqua':       '/products/bonaqua.svg',
-  'bon aqua':      '/products/bonaqua.svg',
-  'fuse':          '/products/fuse-tea.svg',
-  'fuse tea':      '/products/fuse-tea.svg',
-  'coca-cola':     '/products/coca-cola.svg',
-  'coke':          '/products/coca-cola.svg',
+  'coca-cola zero': '/products/coca-cola-zero.jpg',
+  'zero':           '/products/coca-cola-zero.jpg',
+  'fanta':          '/products/fanta.jpg',
+  'sprite':         '/products/sprite.jpg',
+  'bonaqua':        '/products/bonaqua.jpg',
+  'bon aqua':       '/products/bonaqua.jpg',
+  'fuse':           '/products/fuse-tea.jpg',
+  'fuse tea':       '/products/fuse-tea.jpg',
+  'coca-cola':      '/products/coca-cola.jpg',
+  'coke':           '/products/coca-cola.jpg',
 }
 
 export function getProductImage(skuNameOrBrand: string | undefined | null): string {
-  if (!skuNameOrBrand) return '/products/coca-cola.svg'
+  if (!skuNameOrBrand) return '/products/coca-cola.jpg'
   const lower = skuNameOrBrand.toLowerCase()
-  // Try longest match first
   for (const key of Object.keys(BRAND_MAP).sort((a, b) => b.length - a.length)) {
     if (lower.includes(key)) return BRAND_MAP[key]
   }
-  return '/products/coca-cola.svg'
+  return '/products/coca-cola.jpg'
 }

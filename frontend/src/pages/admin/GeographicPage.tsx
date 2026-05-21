@@ -6,15 +6,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AnimatedCounter } from '@/components/AnimatedCounter'
 import { useRegions, useMapData, useSKUs } from '@/api/analytics'
+import { REGION_COLORS } from '@/lib/regions'
 import 'leaflet/dist/leaflet.css'
-
-const REGION_COLORS: Record<string, string> = {
-  dushanbe: '#F40009',
-  sughd: '#FF6B35',
-  khatlon: '#6C63FF',
-  gbao: '#00A651',
-  rrs: '#0EA5E9',
-}
 
 export default function GeographicPage() {
   const { t } = useTranslation()

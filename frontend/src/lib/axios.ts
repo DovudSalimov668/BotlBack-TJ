@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { logger } from '@/lib/logger'
+import { useAuthStore } from '@/store/authStore'
 
 const api = axios.create({
   baseURL: '/api',
@@ -41,8 +42,7 @@ api.interceptors.response.use(
           original.headers.Authorization = `Bearer ${data.access}`
           return api(original)
         } catch {
-          localStorage.removeItem('access_token')
-          localStorage.removeItem('refresh_token')
+          useAuthStore.getState().logout()
           window.location.href = '/login'
         }
       }

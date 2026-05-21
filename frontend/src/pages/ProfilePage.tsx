@@ -7,8 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMe } from '@/api/auth'
 import { useUpdateProfile, useUserStats } from '@/api/users'
 import { NumberRoll } from '@/components/NumberRoll'
-
-const regions = ['dushanbe', 'sughd', 'khatlon', 'gbao', 'rrs']
+import { REGIONS as regions } from '@/lib/regions'
 
 export default function ProfilePage() {
   const { t, i18n } = useTranslation()

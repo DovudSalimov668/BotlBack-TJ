@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import { X, Zap, Lock, RotateCcw, CheckCircle2, Star } from 'lucide-react'
+import { X, Zap, Lock, RotateCcw, CheckCircle2, Star, Trophy, CreditCard, Coins, Gem, Coffee, ShoppingBag, Shirt, Magnet, Gift } from 'lucide-react'
 import { FlipCard3D } from '@/components/FlipCard3D'
 import { usePrizes, useRedeem } from '@/api/rewards'
 import { useAuthStore } from '@/store/authStore'
@@ -11,7 +11,7 @@ import { getProductImage } from '@/lib/productImages'
 import { ErrorMessage } from '@/components/ErrorMessage'
 
 /* ─── prize meta ─── */
-const prizeEmoji = ['💳', '💰', '💎', '🍶', '👜', '👕', '🧲', '🍵']
+const prizeIcons = [CreditCard, Coins, Gem, Coffee, ShoppingBag, Shirt, Magnet, Gift]
 const prizeGrad  = [
   ['#F40009','#c2000b'],
   ['#FF6B35','#e55a26'],
@@ -59,9 +59,9 @@ function Trophy3D({ name }: { name: string }) {
     <div className="flex flex-col items-center py-6" style={{ perspective: 600 }}>
       <motion.div
         style={{ rotateY: rotY, transformStyle: 'preserve-3d' }}
-        className="text-7xl mb-4 select-none"
+        className="mb-4 select-none w-20 h-20 bg-brand-gold/15 rounded-3xl flex items-center justify-center"
       >
-        🏆
+        <Trophy size={44} className="text-brand-gold" />
       </motion.div>
 
       {/* Orbiting stars */}
@@ -69,7 +69,6 @@ function Trophy3D({ name }: { name: string }) {
         <motion.div
           key={i}
           className="absolute text-brand-gold"
-          style={{ fontSize: 14 }}
           animate={{
             rotate: [deg, deg + 360],
             x: [Math.cos((deg * Math.PI) / 180) * 46, Math.cos(((deg + 360) * Math.PI) / 180) * 46],
@@ -78,7 +77,7 @@ function Trophy3D({ name }: { name: string }) {
           }}
           transition={{ duration: 2.4, repeat: Infinity, ease: 'linear', delay: i * 0.1 }}
         >
-          ★
+          <Star size={11} fill="currentColor" />
         </motion.div>
       ))}
 
@@ -256,25 +255,23 @@ export default function RewardsPage() {
                       const hasDrink = drinkKeywords.some(k => prize.name.toLowerCase().includes(k))
                       return hasDrink ? (
                         <motion.div
-                          className="h-16 flex items-center justify-start mb-1"
+                          className="h-14 w-11 rounded-xl overflow-hidden bg-white/90 shadow-md flex items-center justify-center mb-2 flex-shrink-0"
                           animate={!locked ? { y: [0, -3, 0] } : {}}
                           transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
                         >
                           <img
                             src={getProductImage(prize.name)}
                             alt={prize.name}
-                            className="h-full w-auto"
-                            style={{ filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.4))' }}
+                            className="w-full h-full object-contain p-0.5"
                           />
                         </motion.div>
                       ) : (
                         <motion.div
-                          className="text-4xl mb-3"
-                          style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.35))' }}
+                          className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-3 flex-shrink-0"
                           animate={!locked ? { y: [0, -4, 0] } : {}}
                           transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
                         >
-                          {prizeEmoji[i % prizeEmoji.length]}
+                          {(() => { const Icon = prizeIcons[i % prizeIcons.length]; return <Icon size={22} className="text-white" /> })()}
                         </motion.div>
                       )
                     })()}
@@ -308,9 +305,9 @@ export default function RewardsPage() {
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={isFlipped ? { scale: 1, opacity: 1 } : {}}
                       transition={{ delay: 0.25, type: 'spring', damping: 14 }}
-                      className="text-3xl mb-2"
+                      className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center mb-2"
                     >
-                      {prizeEmoji[i % prizeEmoji.length]}
+                      {(() => { const Icon = prizeIcons[i % prizeIcons.length]; return <Icon size={22} className="text-white" /> })()}
                     </motion.div>
                     <p className="text-white/70 text-xs font-semibold mb-1">{prize.name}</p>
                     <div className="flex items-center gap-1 mb-4">
@@ -361,9 +358,9 @@ export default function RewardsPage() {
                           animate={{ rotateY: [0, 360] }}
                           transition={{ duration: 1, ease: 'easeInOut' }}
                           style={{ transformStyle: 'preserve-3d' }}
-                          className="text-5xl mb-2"
+                          className="w-14 h-14 bg-white/15 rounded-3xl flex items-center justify-center mb-2"
                         >
-                          🏆
+                          <Trophy size={32} className="text-white" />
                         </motion.div>
                         <CheckCircle2 size={20} className="text-white mb-1" />
                         <p className="text-white font-black text-xs">Получено!</p>

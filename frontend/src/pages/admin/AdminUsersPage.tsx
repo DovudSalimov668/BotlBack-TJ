@@ -1,18 +1,15 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, UserCog, Coins, ShieldCheck, Trash2, X, ChevronDown } from 'lucide-react'
+import { Search, UserCog, Coins, ShieldCheck, Trash2, X, ChevronDown, Flame } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAdminUsers, useUpdateAdminUser, useDeleteAdminUser, type AdminUser } from '@/api/admin'
+import { REGIONS as REGION_KEYS, REGION_NAMES } from '@/lib/regions'
 
 const REGIONS = [
   { value: '', label: 'Все регионы' },
-  { value: 'dushanbe', label: 'Душанбе' },
-  { value: 'sughd', label: 'Согд' },
-  { value: 'khatlon', label: 'Хатлон' },
-  { value: 'gbao', label: 'ГБАО' },
-  { value: 'rrs', label: 'РРС' },
+  ...REGION_KEYS.map((r) => ({ value: r, label: REGION_NAMES[r] })),
 ]
 
 function AdjustPointsModal({ user, onClose }: { user: AdminUser; onClose: () => void }) {
@@ -185,7 +182,9 @@ export default function AdminUsersPage() {
                     <td className="px-4 py-3 text-right font-bold text-brand-red">{user.total_points}</td>
                     <td className="px-4 py-3 text-right text-gray-600">{user.bottles_recycled}</td>
                     <td className="px-4 py-3 text-right text-gray-600">
-                      {user.streak_days > 0 ? `🔥 ${user.streak_days}` : '—'}
+                      {user.streak_days > 0
+                        ? <span className="inline-flex items-center gap-1"><Flame size={12} className="text-orange-500" />{user.streak_days}</span>
+                        : '—'}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <Badge

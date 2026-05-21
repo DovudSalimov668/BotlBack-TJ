@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
@@ -47,6 +47,8 @@ const marqueeItems = [
 export default function LandingPage() {
   const { t } = useTranslation()
   const { isAuthenticated } = useAuthStore()
+
+  if (isAuthenticated) return <Navigate to="/wallet" replace />
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
@@ -103,6 +105,21 @@ export default function LandingPage() {
 
             {/* Left: copy */}
             <div className="lg:flex-1 lg:max-w-xl relative z-10">
+              {/* Official Coca-Cola logo */}
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mb-5"
+              >
+                <img
+                  src="/coca-cola-logo.svg"
+                  alt="Coca-Cola"
+                  className="h-8 lg:h-10 w-auto"
+                  style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }}
+                />
+              </motion.div>
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -173,7 +190,7 @@ export default function LandingPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.3 }}
             >
-              <CocaColaShowcase size={300} rings />
+              <CocaColaShowcase size={400} rings />
             </motion.div>
 
             {/* Mobile: bottle below hero copy, centred */}
@@ -183,7 +200,7 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.5 }}
             >
-              <CocaColaShowcase size={160} rings={false} />
+              <CocaColaShowcase size={220} rings={false} />
             </motion.div>
           </div>
         </motion.div>
