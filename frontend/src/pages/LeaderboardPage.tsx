@@ -199,7 +199,7 @@ function PodiumColumn({ leader, rank, height, color, delay }: { leader: Leader; 
 
 const PODIUM_COLORS = ['#F40009', '#9CA3AF', '#CD7F32']
 const PODIUM_ORDER  = [1, 0, 2]
-const PODIUM_HEIGHTS = [80, 130, 60]
+const PODIUM_HEIGHTS = [130, 80, 60]
 
 export default function LeaderboardPage() {
   const { t } = useTranslation()
