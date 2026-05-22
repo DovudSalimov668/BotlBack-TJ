@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
-from .models import Bottle, SKU
+from .models import Bottle
 from apps.scans.models import Scan
 from apps.recycling.models import RecyclingPoint
 from apps.achievements.services import check_and_unlock

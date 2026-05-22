@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta

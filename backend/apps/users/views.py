@@ -4,11 +4,9 @@ import uuid
 from datetime import timedelta
 
 from django.conf import settings
-from django.db import transaction
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import Coalesce
 from django.utils import timezone
-from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -63,7 +61,6 @@ class RegisterView(APIView):
         user.save(update_fields=['referral_code'])
         if referrer:
             from apps.scans.models import Scan
-            from apps.bottles.models import Bottle
             # Award referral bonus via a virtual scan-like entry — use a special scan
             # We create a zero-bottle scan to track the bonus
             Scan.objects.create(
@@ -174,7 +171,6 @@ class UserStatsView(APIView):
 
     def get(self, request):
         user = request.user
-        from apps.scans.models import Scan
         user_points = user.total_points
         rank = (
             User.objects

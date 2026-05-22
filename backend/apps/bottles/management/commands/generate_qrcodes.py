@@ -11,7 +11,6 @@ Output:
 
 import os
 import qrcode
-from qrcode.image.pure import PyPNGImage
 from django.core.management.base import BaseCommand
 
 BOTTLE_CODES = [
@@ -110,6 +109,6 @@ class Command(BaseCommand):
 
         make_html_sheet(BOTTLE_CODES, RECYCLING_CODES, out_dir)
         self.stdout.write(self.style.SUCCESS(
-            f'\nDone! Open  media/qrcodes/sheet.html  in a browser to print.\n'
-            f'PNG files are in  media/qrcodes/'
+            '\nDone! Open  media/qrcodes/sheet.html  in a browser to print.\n'
+            'PNG files are in  media/qrcodes/'
         ))

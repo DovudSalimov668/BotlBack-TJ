@@ -11,7 +11,6 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     request = context.get('request')
-    view = context.get('view')
     request_id = getattr(request, 'request_id', '-') if request else '-'
 
     if response is not None:

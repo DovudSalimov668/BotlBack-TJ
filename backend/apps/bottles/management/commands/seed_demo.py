@@ -4,7 +4,6 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 
 TJ = ZoneInfo('Asia/Dushanbe')
 
@@ -286,7 +285,8 @@ class Command(BaseCommand):
             for j in range(purchases):
                 if idx >= len(test_reserve_bottles):
                     break
-                b = test_reserve_bottles[idx]; idx += 1
+                b = test_reserve_bottles[idx]
+                idx += 1
                 b.is_scanned = True
                 _d = datetime(day_base.year, day_base.month, day_base.day, tzinfo=TJ) + timedelta(days=j * random.randint(1, 3), hours=random.randint(8, 21))
                 dt_p = _d
