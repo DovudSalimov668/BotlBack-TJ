@@ -40,6 +40,8 @@ export default function ScanPage() {
   const scanMutation = useScanBottle()
   const recycleMutation = useRecycleBottle()
   const [phase, setPhase] = useState<ScanPhase>({ kind: 'idle' })
+  const phaseRef = useRef<ScanPhase>({ kind: 'idle' })
+  useEffect(() => { phaseRef.current = phase }, [phase])
   const [statusMsg, setStatusMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [manualMode, setManualMode] = useState(false)
@@ -60,6 +62,7 @@ export default function ScanPage() {
 
   // ── Core logic ──────────────────────────────────────────────────────────────
   const handleCode = useCallback(async (raw: string) => {
+    const currentPhase = phaseRef.current  // read from ref — no stale closure
     const code = raw.trim().toUpperCase()
     if (!code || hasScannedRef.current) return
     hasScannedRef.current = true
@@ -69,20 +72,20 @@ export default function ScanPage() {
 
     // ── Case 1: Recycling point QR ─────────────────────────────────────────
     if (qrType === 'recycling_point') {
-      if (phase.kind === 'need_rp') {
+      if (currentPhase.kind === 'need_rp') {
         // User already has a bottle scanned — do recycle
         setPhase({ kind: 'processing' })
         setStatusMsg('Recycling...')
         try {
           const data = await recycleMutation.mutateAsync({
-            bottle_qr: phase.bottleQR,
+            bottle_qr: currentPhase.bottleQR,
             recycling_point_qr: code,
           })
           navigate(`/scan/result/${data.scan_id}`, {
             state: {
               points: data.points_awarded,
               total: data.total_points,
-              sku: data.recycling_point ?? phase.bottleName,
+              sku: data.recycling_point ?? currentPhase.bottleName,
               type: 'recycle',
               streak_days: data.streak_days,
               unlocked_achievements: data.unlocked_achievements ?? [],
@@ -121,14 +124,21 @@ export default function ScanPage() {
 
     // ── Case 2: Bottle QR ──────────────────────────────────────────────────
     if (qrType === 'bottle' || qrType === 'unknown') {
-      if (phase.kind === 'has_rp') {
+      // Guard: already have a bottle scanned, user must now scan a recycling point
+      if (currentPhase.kind === 'need_rp') {
+        setErrorMsg(t('scan.scan_rp_not_bottle'))
+        hasScannedRef.current = false
+        return
+      }
+
+      if (currentPhase.kind === 'has_rp') {
         // We're at a recycling point — recycle this bottle
         setPhase({ kind: 'processing' })
         setStatusMsg('Recycling...')
         try {
           const data = await recycleMutation.mutateAsync({
             bottle_qr: code,
-            recycling_point_qr: phase.rpQR,
+            recycling_point_qr: currentPhase.rpQR,
           })
           navigate(`/scan/result/${data.scan_id}`, {
             state: {
@@ -201,11 +211,14 @@ export default function ScanPage() {
         }
       }
     }
-  }, [phase, scanMutation, recycleMutation, navigate, reset, t])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scanMutation, recycleMutation, navigate, reset, t])
 
   // ── Camera ─────────────────────────────────────────────────────────────────
+  // Only stop/restart camera when processing starts or stops — not on every phase transition.
+  const isProcessingCamera = phase.kind === 'processing'
   useEffect(() => {
-    if (manualMode || phase.kind === 'processing') return
+    if (manualMode || isProcessingCamera) return
     const box = Math.max(180, scanSize - 32)
     const qr = new Html5Qrcode('qr-reader')
     scannerRef.current = qr
@@ -218,7 +231,9 @@ export default function ScanPage() {
     return () => {
       void qr.stop().then(() => qr.clear()).catch(() => {})
     }
-  }, [manualMode, scanSize, phase.kind, handleCode])
+  // handleCode is stable (no phase dep — reads phaseRef.current internally)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manualMode, scanSize, isProcessingCamera])
 
   const isProcessing = phase.kind === 'processing' || scanMutation.isPending || recycleMutation.isPending
 
