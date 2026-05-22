@@ -5,7 +5,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
@@ -282,26 +283,27 @@ class AdminUserListView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        from apps.scans.models import Scan
-        from django.db.models import Q
         search = request.query_params.get('q', '').strip()[:50]
         region = request.query_params.get('region', '')
-        qs = User.objects.order_by('-date_joined')
+        qs = User.objects.annotate(
+            pts_earned=Coalesce(Sum('scans__points_awarded'), 0),
+            pts_spent=Coalesce(Sum('redemptions__points_spent'), 0),
+            recycle_count=Count('scans', filter=Q(scans__scan_type='recycle')),
+        ).order_by('-date_joined')
         if search:
             qs = qs.filter(Q(phone__icontains=search) | Q(name__icontains=search))
         if region:
             qs = qs.filter(region=region)
-        users = qs[:200]
         data = []
-        for u in users:
+        for u in qs[:200]:
             data.append({
                 'id': u.id,
                 'phone': u.phone,
                 'name': u.name or '',
                 'region': u.region or '',
                 'is_staff': u.is_staff,
-                'total_points': u.total_points,
-                'bottles_recycled': u.bottles_recycled,
+                'total_points': max(0, u.pts_earned - u.pts_spent),
+                'bottles_recycled': u.recycle_count,
                 'streak_days': u.streak_days,
                 'created_at': u.date_joined.isoformat(),
             })
@@ -326,7 +328,10 @@ class AdminUserDetailView(APIView):
         user.save(update_fields=['name', 'region', 'is_staff'])
         # Manual point adjustment: create a scan record with points_delta
         if 'points_delta' in request.data:
-            delta = int(request.data['points_delta'])
+            try:
+                delta = int(request.data['points_delta'])
+            except (ValueError, TypeError):
+                return Response({'error': 'points_delta must be an integer'}, status=400)
             if delta != 0:
                 Scan.objects.create(
                     bottle=None,

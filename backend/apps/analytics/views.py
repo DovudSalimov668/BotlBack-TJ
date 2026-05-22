@@ -336,12 +336,16 @@ class CampaignsView(APIView):
 
     def post(self, request):
         from datetime import date
+        try:
+            target = int(request.data.get('target_bottles', 10000))
+        except (ValueError, TypeError):
+            target = 10000
         c = Campaign.objects.create(
             name=str(request.data.get('name', 'New Campaign'))[:200],
             description=str(request.data.get('description', ''))[:2000],
             start_date=request.data.get('start_date', str(date.today())),
             end_date=request.data.get('end_date', str(date.today())),
-            target_bottles=int(request.data.get('target_bottles', 10000)),
+            target_bottles=max(1, target),
         )
         return Response({'id': c.id, 'name': c.name}, status=201)
 
@@ -362,7 +366,10 @@ class CampaignDetailView(APIView):
         if 'end_date' in request.data:
             c.end_date = request.data['end_date']
         if 'target_bottles' in request.data:
-            c.target_bottles = int(request.data['target_bottles'])
+            try:
+                c.target_bottles = max(1, int(request.data['target_bottles']))
+            except (ValueError, TypeError):
+                return Response({'error': 'target_bottles must be an integer'}, status=400)
         if 'is_active' in request.data:
             c.is_active = bool(request.data['is_active'])
         c.save()
