@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Sum
 from rest_framework import serializers
@@ -7,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Prize, Redemption
+
+User = get_user_model()
 
 
 class PrizeSerializer(serializers.ModelSerializer):
@@ -35,18 +38,20 @@ class RedeemView(APIView):
     def post(self, request):
         prize_id = request.data.get('prize_id')
         with transaction.atomic():
+            # Lock user row first (prevents double-spend under concurrent requests)
+            user = User.objects.select_for_update().get(pk=request.user.pk)
             prize = Prize.objects.select_for_update().filter(id=prize_id, is_active=True).first()
             if not prize:
                 return Response({'error': 'Prize not found'}, status=404)
             if prize.stock_quantity == 0:
                 return Response({'error': 'Out of stock'}, status=400)
-            earned = request.user.scans.aggregate(total=Sum('points_awarded'))['total'] or 0
-            spent = request.user.redemptions.aggregate(total=Sum('points_spent'))['total'] or 0
+            earned = user.scans.aggregate(total=Sum('points_awarded'))['total'] or 0
+            spent = user.redemptions.aggregate(total=Sum('points_spent'))['total'] or 0
             current_points = max(0, earned - spent)
             if current_points < prize.points_cost:
                 return Response({'error': 'Insufficient points'}, status=400)
             redemption = Redemption.objects.create(
-                user=request.user,
+                user=user,
                 prize=prize,
                 points_spent=prize.points_cost,
                 status='pending',
@@ -58,7 +63,7 @@ class RedeemView(APIView):
             'redemption_id': redemption.id,
             'prize': prize.name,
             'points_spent': redemption.points_spent,
-            'remaining_points': request.user.total_points,
+            'remaining_points': user.total_points,
         }, status=201)
 
 

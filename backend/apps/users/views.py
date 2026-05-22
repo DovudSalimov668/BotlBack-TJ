@@ -191,7 +191,10 @@ class MyScanHistoryView(APIView):
 
     def get(self, request):
         from apps.scans.models import Scan
-        limit = min(int(request.query_params.get('limit', 20)), 100)
+        try:
+            limit = min(int(request.query_params.get('limit', 20)), 100)
+        except (ValueError, TypeError):
+            limit = 20
         scans = (
             Scan.objects
             .filter(user=request.user)

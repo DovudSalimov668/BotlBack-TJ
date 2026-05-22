@@ -20,7 +20,7 @@ class Prize(models.Model):
 
 
 class Redemption(models.Model):
-    STATUS_CHOICES = [('pending', 'Pending'), ('fulfilled', 'Fulfilled')]
+    STATUS_CHOICES = [('pending', 'Pending'), ('fulfilled', 'Fulfilled'), ('cancelled', 'Cancelled')]
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
